@@ -1,0 +1,9 @@
+.container_form {
+    background: #ccc;
+    width: 340px;
+    margin: auto;
+    margin-top: 15%;
+}
+input[type="password"], input[type="text"], input[type="submit"]{
+    display: block;
+}
