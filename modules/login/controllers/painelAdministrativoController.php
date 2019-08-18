@@ -334,19 +334,19 @@ class PainelAdministrativo extends Controller{
 
                 $headers .= "Content-type: text/plain; charset=UTF-8\r\n";
                 
-                $headers .= "From: eu@seudominio.com\r\n"; // remetente
+                $headers .= "From: fabio.s.a.proweb@gmail.com\r\n";
                 
-                $headers .= "Return-Path: eu@seudominio.com\r\n"; // return-path
+                $headers .= "Return-Path: fabio.s.a.proweb@gmail.com\r\n";
                 
                 $envio = mail($_POST['envia_email'], "Notificação- p21 Sistema", $_POST['envia_texto'], $headers);
                  
                 if($envio):
 
-                    echo "Mensagem enviada com sucesso";
+                    echo "E-mail enviada com sucesso";
 
                 else:
 
-                 echo "A mensagem não pode ser enviada";
+                 echo "E-mail não pode ser enviada";
 
                 endif;
 
