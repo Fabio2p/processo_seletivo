@@ -48,5 +48,12 @@ $Routers = [
          */
         'usuario/autenticado' => 'index',
 
+        /**
+         * Método importação de xml da classe painelAdministrativoController localizado em:
+         * 
+         * ../modules/login/controllers/painelAdministrativoController.php
+         */
+        'importacao-xml'      => 'importa_xml',
+
     ],
 ];

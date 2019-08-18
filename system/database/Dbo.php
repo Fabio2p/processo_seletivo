@@ -108,6 +108,31 @@ class Dbo extends Database{
     return $this->stm->fetchAll();
 
   }
+
+  protected function update($table, array $fields, $id, $param){
+
+    foreach($fields as $vars=>$k):
+
+        $field[] = $vars .'= :'. $vars;
+
+        $places = implode(' ,', $field);
+
+    endforeach;
+
+    $query = "UPDATE {$table} SET {$places} WHERE {$id}= :{$param}";
+
+    $this->stm = $this->db->prepare($query);
+
+    foreach($fields as $chaves=>$valores):
+
+      $this->stm->bindValue(":{$chaves}", $valores, (is_int($valores) ? PDO::PARAM_INT : PDO::PARAM_STR));
+          
+    endforeach;
+
+    $this->stm->bindParam(":{$param}", $param, PDO::PARAM_INT);
+
+    $this->stm->execute();
+  }
   
   /**
    * Método close(): fecha a conexão

@@ -15,19 +15,38 @@
 		App::token(); 
 
 	?>
+	<div class="container-info">
 
+		<h2>Processo Seletivo:</h2>
+
+		<p class="texto-centro">p21sistemas</p>
+
+		<hr />
+
+		<p class="texto-centro-light"><b>Login:</b> secretaria</p>
+
+		<p class="texto-centro-light"><b>Senha:</b> secretaria123</p>
+
+	</div>
 	<div class="container_form">
 		
 		<form action="?module=login&option=pagina-de-login&view=index" method="post">
-			
-			<label>Login</label>
-			<input type="text" name="login">
+			 
+			<div class="input">
+				
+				<label>Login</label>
+				
+				<input type="text" name="login">
 
-			<label>Senha</label>
-			<input type="password" name="senha">
-			<input type="hidden" name="token" value="<?= $_SESSION['token']; ?>" />
-			<input type="submit" value="Acessar" />
-			
+				<label>Senha</label>
+				
+				<input type="password" name="senha">
+				
+				<input type="hidden" name="token" value="<?= $_SESSION['token']; ?>" />
+				
+				<input type="submit" value="Acessar" class="btn-submit" />
+
+			</div>
 		</form>
 
 	</div>
