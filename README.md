@@ -1,7 +1,7 @@
 # processo_seletivo
 
-1º Importe o <b>banco de dados</b> para o SGBD MYSQL;<br>
-2º Acesse localhost/processo_seletivo/public;
-3º Utiliza o login e senha disponível na tela de autenticação;
+1º Importe o <b>banco de dados</b> para o <b>SGBD MYSQL</>;<br>
+2º Acesse <b>localhost/processo_seletivo/public</b>; <br />
+3º Utiliza o <b>login</b> e <b>senha</b> disponível na <b>tela de autenticação</b>;
 4º Importe o xml para o sistema;
 
