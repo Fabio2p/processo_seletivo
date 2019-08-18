@@ -85,15 +85,16 @@ class Login extends Controller{
                      */
                     header("Location: ?module=login&option=painel-administrativo&view=usuario/autenticado");
 
-                else:
-
-                   // echo "<b>Usuário</b> ou <b>Senha</b> incorreto!";
-
+               
                 endif;
 
 
-            //else:
-                
+            else:
+                 echo "<b>Usuário</b> ou <b>Senha</b> incorreto!";
+
+                 App::session_destroy();
+
+                  header("Refresh: 1;url=?module=login");
             endif;
 
 

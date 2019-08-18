@@ -37,11 +37,13 @@
 
     			<div class="containe-form-body">
 
-			        <form  enctype="multipart/form-data" action="?module=login&option=painel-administrativo&view=importacao-xml" method="post">
+			        <form class="xml-importa"  enctype="multipart/form-data" action="?module=login&option=painel-administrativo&view=importacao-xml" method="post" name="importar_xml">
 			        	
 			        	<input type="file" name="importar_xml" />
 
-			        	<button type="button">Importar xml</button>
+			        	<input type="hidden" name="token" class="input-file" value="<?$_SESSION['token']?>" />
+
+			        	<input type="submit" class="input-submt" name="submit" value="importar Xml">
 
 			        </form>
 
@@ -149,12 +151,8 @@
      </div>   
 
 	<script src="<?= BASE_SITE?>/js/jquery.js"></script>
-
-	<script type="text/javascript">
-		jQuery(function(){
-
-
-		});
+	
+	<script src="<?= BASE_SITE?>/js/requisicao.js"></script>
 
 	</script>
 

@@ -56,10 +56,24 @@ input.btn-submit:hover {
 }
 
 
-/* Formulário de login*/
+/* fim Formulário de login*/
 
+/*Interface Administração*/
 .container {
     width: 100%;
+}
+
+form .xml-importa{
+    display: inline-flex;
+}
+
+input.input-submt {
+    /* height: 29px; */
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: 700;
+    justify-content: space-between;
+    float: right;
 }
 
 .form-header {
@@ -142,6 +156,8 @@ input[type="password"], input[type="text"], input[type="submit"]{
     display: block;
 }
 
+/*Fim de interface administração*/
+
 /*Formatação de tabelas*/
 
 table.table {
@@ -153,8 +169,11 @@ thead.border-bottom th {
     border: 1px solid #ccc;
 }
 
+tr.no-hover{
+    background: #f9f9f9;
+}
 tr.hover:hover {
-    background: #ccc;
+    background: #f9f9f9;
 }
 
 tbody td {
@@ -163,3 +182,36 @@ tbody td {
     border-right: 1px solid #ccc;
     border-left:  1px solid #ccc;
 }
+
+/*Formulario de cadastro*/
+.cadastro-usuario {
+    /* background: rebeccapurple; */
+    display: inherit;
+    width: 25%;
+    margin: auto;
+}
+
+.cadastro-input{
+	width: 100%;
+	height: 22px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.cadastro-usuario label {
+    color: #000;
+    font-weight: 700;
+}
+
+.cadastro-submit {
+    height: 30px;
+    margin-top: 10px;
+}
+
+textarea.email-textarea {
+    height: 300px;
+    width: 99%;
+    margin-top: 15px;
+}
+
+/*Formulário de cadastro*/

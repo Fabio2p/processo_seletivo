@@ -64,6 +64,7 @@ class PainelAdministrativo extends Controller{
         // Verifica se o usuário está logado
         if($_SESSION['logado']):
 
+           if(isset($_SESSION['token'])):
             /* cria um instância da classe usuario localizado em:
             *
             * ../modules/login/models/usuarioModel.php 
@@ -89,7 +90,19 @@ class PainelAdministrativo extends Controller{
                 endforeach;
                     
 
-            endif;    
+                echo "Dados importado com Sucesso!";
+                /*
+                * Redireciona para a pagina de administação
+                */
+                header("Refresh: 1;url=?module=login&option=painel-administrativo&view=usuario/autenticado");
+
+            endif; 
+
+            else:
+
+            App::session_destroy(); 
+
+           endif;  
 
         else:
 
@@ -116,6 +129,10 @@ class PainelAdministrativo extends Controller{
 
                 $list_dado_unico = $this->model('/login', 'usuario');
 
+                /*
+                * seta o título da página
+                */
+                $passa_dados_para_view['title'] = "Dashboard - Editar Usuário!";
 
                 $passa_dados_para_view['lista_objeto'] = $list_dado_unico->lista_dados_unico($id);
 
@@ -172,6 +189,9 @@ class PainelAdministrativo extends Controller{
 
                 echo  "Dados Editado com sucesso!";
 
+               /*
+                * Redireciona para a pagina de administação
+                */ 
                header("Refresh: 1;url=?module=login&option=painel-administrativo&view=usuario/autenticado");
 
             else:
@@ -198,8 +218,12 @@ class PainelAdministrativo extends Controller{
 
         if(isset($_SESSION['logado'])):
 
+            /*
+                * seta o título da página
+                */
+                $titulo['title'] = "Dashboard - Cadastro de Usuário!";
 
-            $this->view('/login', 'cadastro_usuario');
+            $this->view('/login', 'cadastro_usuario', $titulo);
 
          else:
 
@@ -249,7 +273,10 @@ class PainelAdministrativo extends Controller{
 
                 echo  "Dados Salvos com sucesso!";
 
-               header("Refresh: 1;url=?module=login&option=painel-administrativo&view=usuario/autenticado");
+                /*
+                * Redireciona para a pagina de administação
+                */
+                header("Refresh: 1;url=?module=login&option=painel-administrativo&view=usuario/autenticado");
 
             else:
 
@@ -265,13 +292,22 @@ class PainelAdministrativo extends Controller{
 
     }
 
+    /*
+    * Carrega o formulario de E-mail
+    */
+
     public function enviar_email(){
 
         App::session();
 
         if(isset($_SESSION['logado'])):
 
-            $this->view('/login', 'formulario_envia_email');
+            /*
+            * seta o título da página
+            */
+            $titulo['title'] = "Dashboard - Envio de E-mail!";
+
+            $this->view('/login', 'formulario_envia_email', $titulo);
 
         else:
 
@@ -314,6 +350,9 @@ class PainelAdministrativo extends Controller{
 
                 endif;
 
+                /*
+                * Redireciona para a pagina de E-mail
+                */
                 header("Refresh: 1;url=?module=login&option=painel-administrativo&view=enviar_email");
 
             else: 
