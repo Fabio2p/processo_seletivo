@@ -1,4 +1,4 @@
-# Processo seletivo Desenvolvedor php junior
+# Processo seletivo
 
 1º Importe o <b>banco de dados</b> para o <b>SGBD MYSQL</b> localizado no <b>diretório  ../banco de dados</b>;<br>
 2° Acesse o <b>diretório ../config/config.db.php</b> e altera as <b>configutaçãoe do servidor de banco</b> de acordo com a necessidade.<br>
