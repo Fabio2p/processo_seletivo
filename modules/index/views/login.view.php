@@ -19,7 +19,7 @@
 
 		<h2>Processo Seletivo:</h2>
 
-		<p class="texto-centro">p21sistemas</p>
+		<p class="texto-centro">Tela de Login</p>
 
 		<hr />
 
