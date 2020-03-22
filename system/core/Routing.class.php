@@ -1,9 +1,5 @@
 <?php
 /*
- * Author: Fábio Silveira dos Anjos
- * AuthorEmail: fabio.s.a.proweb@gmail.com
- * data: 15-08-2019
-
  * Classe Routing: Carrega as classes controllers em: ../modules/controllers/+modulo+/+controllers_desejado
  * valida a classe de acordo com a chamada via url;
  * caso exista uma classe semelhante a chamada via url, cria se um objeto dessa classe
@@ -101,7 +97,7 @@ class Routing{
                 
                 if(realpath('../system/core/http/Routers.php')):
 
-                    // Inclui o arqui Routers.php
+                    // Inclui o arquivo Routers.php do diretorio Http
                     require_once(realpath('../system/core/http/Routers.php'));
                     
                     /*
@@ -127,7 +123,7 @@ class Routing{
                             /**
                             * Verifica se existe url amigavél no arquivo Routers
                             */
-                            $method = (isset($Routers['Actions'][$this->view]) ? $Routers['Actions'][$this->view] : $this->view);
+                            $method = (!isset($Routers['Actions'][$this->view]) && $this->view == null ? 'index' : $this->view);
 
                             if(method_exists($obj_controller, $method)):
                                 
@@ -138,15 +134,38 @@ class Routing{
 
                             else:
 
-                                echo "Metodo não encontrado!";
+                              //@Redirect: redireciona para a tela de login.
+                              header("Location: /");
 
                             endif; // Verifica se existe um metodo.
-                        
+                            
+                            else:
+
+                             //@Redirect: redireciona para a tela de login.
+                             header("Location: /");
+
                         endif; // Verifica se existe classe;
+                        
+                        
+                        else:
+
+                         //@Redirect: redireciona para a tela de login.
+                         header("Location: /");
+
 
                     endif; // Verifica se existe o arquivo de rota
 
-                    endif; // verifica se existe arquivo 
+                    else:
+
+                    //@Redirect: redireciona para a tela de login.
+                    header("Location: /");
+
+                    endif; // verifica se existe arquivo
+
+                else:
+
+                    //@Redirect: redireciona para a tela de login.
+                    header("Location: /");
 
             endif; //valida se é um diretório
         
@@ -175,7 +194,7 @@ class Routing{
                     /*
                     * verifica se existe rota setados no arquivo: ../system/core/http/Routers.php
                     */    
-                    $routes = (isset($Routers['Controllers'][$this->route]) ? $Routers['Controllers'][$this->route] : 'home');
+                    $routes = (isset($Routers['Controllers'][$this->route]) ? $Routers['Controllers'][$this->route] : 'login');
 
                     $path_controller = $path_module."/controllers/".trim($routes."Controller.php");
                     
@@ -204,7 +223,8 @@ class Routing{
 
                             else:
 
-                                echo "Metodo não encontrado!";
+                                //@Redirect: redireciona para a tela de login.
+                                header("Location: /");
 
                             endif; // Verifica se existe um metodo.
                         
@@ -216,10 +236,12 @@ class Routing{
 
                 else:
 
-                    echo "Módulo <b>{$this->path_modules}</b> não localizado!";
+                    /*
+                     * Redireciona para a página de login caso não encontre um sistema válido.*/
+                    header("Location: /");
 
             endif; //valida se é um diretório
-        
+
         /**
          * Somente se o usuário digitar o endereço da aplicação.
          *
@@ -258,7 +280,8 @@ class Routing{
 
                             else:
 
-                                echo "Metodo não encontrado!";
+                                //@Redirect: redireciona para a tela de login.
+                                header("Location: /");
 
                             endif; // Verifica se existe um metodo.
                         

@@ -19,13 +19,13 @@ abstract class Controller{
 
         if(is_array($dados) && $dados > 0):
             
-            extract($dados, EXTR_PREFIX_ALL, 'view');
+            extract($dados);
 
         endif;
 
-        if(file_exists(realpath("../modules{$module}/views/{$view}.view.php"))):
+        if(file_exists(realpath("../modules{$module}/views/{$view}.php"))):
 
-            return require_once(realpath("../modules{$module}/views/{$view}.view.php"));
+            return require_once(realpath("../modules{$module}/views/{$view}.php"));
             
             exit;
 
@@ -42,9 +42,9 @@ abstract class Controller{
 	*/
     protected function model($module, $model){
 
-        if(file_exists(realpath("../modules{$module}/models/{$model}Model.php"))):
+        if(file_exists(realpath("../modules{$module}/models/{$model}.php"))):
 
-            require_once(realpath("../modules{$module}/models/{$model}Model.php"));
+            require_once(realpath("../modules{$module}/models/{$model}.php"));
             
             if(class_exists($model)):
 
