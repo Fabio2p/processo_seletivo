@@ -11,6 +11,11 @@
  */
 class App{
 
+    public static function title(){
+
+        return '/index';
+    }
+
     /**
      * Inicia uma sessão
      */
@@ -23,6 +28,13 @@ class App{
         endif;
 
     } 
+
+    public static function getId(){
+
+        $id = FILTER_INPUT(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+
+        return $id;
+    }
 
     /**
      * Destroi uma sessão

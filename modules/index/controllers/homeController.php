@@ -12,15 +12,29 @@
 class Home extends Controller{
 
     public function index(){
-        
-            /**
-             * carrega a view login.view.php em:
-             * 
-             * ../modules/index/views/login.view.php
-             */
-          $this->view('/index', 'login');
-          
-          exit;
+
+        //@method override: chama o método view 
+        $this->view("/index",'teste-alerts');
+
     }
 
+    public function swheetAlert(){
+
+
+        echo "<pre>";
+            print_r($_POST);
+        echo "</pre>";
+
+    	/*$data = true;
+
+    	if($data == true):
+
+    		echo "Cadastro realizdo com sucesso";
+
+    	else:
+    	
+    		echo "Falha ao cadastrar os dados";	
+
+    	endif;	*/
+    }
 }

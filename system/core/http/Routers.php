@@ -26,8 +26,10 @@ $Routers = [
          * Controller: painelAdministrativo localizado no modulo 'login' em:
          * 
          * ../modules/login/controllers/painelAdministrativoController.php
+         * 
+         * Autentica o usuário na administração do site
          */
-        'painel-administrativo' => 'painelAdministrativo',
+        'authenticate' => 'painelAdministrativo',
     ],
     
     /**
@@ -45,8 +47,10 @@ $Routers = [
          * Método logout da classe painelAdministrativoController localizado em:
          * 
          * ../modules/login/controllers/painelAdministrativoController.php
+         * 
+         * Redireciona o usuário para a área administrativa do site
          */
-        'usuario/autenticado' => 'index',
+        'user/checked' => 'index',
 
         /**
          * Método importação de xml da classe painelAdministrativoController localizado em:

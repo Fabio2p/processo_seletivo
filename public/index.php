@@ -1,4 +1,6 @@
 <?php
+define('_exec', 1);
+
 	/*
 	* Author: Fábio Silveira dos Anjos
 	* AuthorEmail: fabio.s.a.proweb@gmail.com
