@@ -4,10 +4,10 @@
 
     $DESENVOLVIMENTO = [
 
-       'HOST' => "172.18.0.2", //HOST: VM SDREDES - 10.73.1.59
-       'BASE' => 'banco',
-       'USER' => 'administrador',
-       'PASS' => 'F@bio5505',
+       'HOST' => "172.17.0.3", //HOST: VM SDREDES - 10.73.1.59
+       'BASE' => 'zabbix',
+       'USER' => 'fabio',
+       'PASS' => '5505',
 
     ];
 
