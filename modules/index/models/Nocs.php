@@ -4,13 +4,15 @@ require_once __DIR__ ."/../config.module.php";
 class Nocs extends Dbo{
 
     
-    public function cadastroRegrasNegocios($idEmpresa,$idEquipamento,$severidade,$notifica_cliente,$notifica_empresa,$tempo_notifica_cliente,$tempo_notifica_empresa,$renotifica_interacao,$idTrigger){
+    public function cadastroRegrasNegocios($idEmpresa,$idTemplate = null,$idEquipamento = null,$severidade,$notifica_cliente,$notifica_empresa,$tempo_notifica_cliente,$tempo_notifica_empresa,$renotifica_interacao,$idTrigger){
 
-       $query = "INSERT into noc_notificacao(IDEMPRESA,IDEQUIPAMENTO,SEVERIDADE,NOTIFICA_CLIENTE,NOTIFICA_EMPRESA,TEMPO_NOTIFICA_CLIENTE,TEMPO_NOTIFICA_EMPRESA,RENOTIFICA_INTERACAO,IDTRIGGER) VALUES(:IDEMPRESA,:IDEQUIPAMENTO,:SEVERIDADE,:NOTIFICA_CLIENTE,:NOTIFICA_EMPRESA,:TEMPO_NOTIFICA_CLIENTE,:TEMPO_NOTIFICA_EMPRESA,:RENOTIFICA_INTERACAO,:IDTRIGGER)";
+       $query = "INSERT into noc_notificacao(IDEMPRESA,IDTEMPLATE,IDEQUIPAMENTO,SEVERIDADE,NOTIFICA_CLIENTE,NOTIFICA_EMPRESA,TEMPO_NOTIFICA_CLIENTE,TEMPO_NOTIFICA_EMPRESA,RENOTIFICA_INTERACAO,IDTRIGGER) VALUES(:IDEMPRESA,:IDTEMPLATE,:IDEQUIPAMENTO,:SEVERIDADE,:NOTIFICA_CLIENTE,:NOTIFICA_EMPRESA,:TEMPO_NOTIFICA_CLIENTE,:TEMPO_NOTIFICA_EMPRESA,:RENOTIFICA_INTERACAO,:IDTRIGGER)";
 
        $stm = $this->db->prepare($query);
 
         $stm->bindValue(":IDEMPRESA", $idEmpresa);
+
+         $stm->bindValue(":IDTEMPLATE", $idTemplate);
 
         $stm->bindValue(":IDEQUIPAMENTO", $idEquipamento);
 
@@ -45,5 +47,34 @@ class Nocs extends Dbo{
 
     }
 
+
+    public function selecionaNoc_host($id_empresa){
+
+
+        $query = "SELECT * FROM hosts WHERE IDEMPRESA =:IDEMPRESA";
+
+        $stm = $this->db->prepare($query);
+
+        $stm->bindValue(":IDEMPRESA", $id_empresa);
+
+        $stm->execute();
+
+        return $stm->fetchAll();
+    }
+
+
+    public function selecionaNoc_notificacao($id_empresa){
+
+
+        $query = "SELECT * FROM noc_notificacao WHERE IDEMPRESA =:IDEMPRESA";
+
+        $stm = $this->db->prepare($query);
+
+        $stm->bindValue(":IDEMPRESA", $id_empresa);
+
+        $stm->execute();
+
+        return $stm->fetchAll();
+    }
 
 }

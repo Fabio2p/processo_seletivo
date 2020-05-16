@@ -17,8 +17,22 @@
 	<form method="POST" id="regras" name="regras">
 	<div class="row mt-5">
 		<div class="col-sm-3">
+			<!-- Regras aplicada ao template -->
+			<div class="form-group">
+				<select class="form-control" name="rnTemplate" id="rnTemplate">
+					<option value="0">Selecione um Equipamento</option>
+					<?php foreach($regras_lista_template->result as $h => $dadosTemplate):?>
+
+						<option value="<?php echo $dadosTemplate->templateid; ?>"><?php echo $dadosTemplate->host; ?></option>
+
+					<?php endforeach;?>	
+				</select>
+			</div>
+			<!--Fim das regras aplicada -->
+
 			<div class="form-group">
 				<select class="form-control" name="equipamento" id="equipamento">
+					<option value="0">Selecione um Equipamento</option>
 					<?php foreach($regras_lista_hosts->result as $h => $host):?>
 
 						<option value="<?php echo $host->hostid; ?>"><?php echo $host->host; ?></option>
@@ -66,7 +80,7 @@
 			
 			<table class="table table-hover">
 				<thead>
-					<th><input type="checkbox" name="cbs[]"></th>
+					<th><input type="checkbox" name="todos" id="todos"></th>
 					<th>Id</th>
 					<th>Nome</th>
 				</thead>
@@ -113,12 +127,42 @@
 
 		}); // fim do changes
 
+		//@Regras aplicada ao template
+		jQuery("#rnTemplate").change(function(){
+
+			//let id = 1;
+
+			let idHost = jQuery(this).val();
+
+			jQuery.get("http://host.local.dev-sys/index/home/getRegrasTriggers/"+idHost, function(h){
+
+			var objHost = jQuery.parseJSON(h);
+                
+                jQuery("#teste").empty();      	 
+                       
+                jQuery.each(objHost, function(i, listItem){
+
+                 jQuery("#teste").prepend('<tr><td><input type="checkbox" name="cbs[]" value="'+listItem.triggerid+'" class="selecionado"></td>'+'<td>'+listItem.triggerid+'</td><td class="descricao">'+listItem.description+'</td></tr>');
+
+                 //console.log(listItem.description);
+
+                });
+
+
+			});
+
+		}); // fim do changes
+
+		//@Fim das regras aplicada ao template
 
 		jQuery("form[name='regras']").submit(function(){
 
 			var checkeds 			 	= new Array();
 
 			let equipamento 		 	= jQuery("#equipamento").val();
+
+			//@paga o id do templare
+			let rnTemplate 				= jQuery("#rnTemplate").val();
 
 			let severidade  		 	= jQuery("#severidade").val();
 
@@ -161,7 +205,7 @@
 			  
 			  url: "http://host.local.dev-sys/index/home/salvar",
 
-			  data: {equipamento:equipamento,severidade:severidade,rnCliente:rnCliente,rnEmpresa:rnEmpresa,tempoNotificaCliente:tempoNotificaCliente,tempoNotificaEmpresa:tempoNotificaEmpresa,renotificacao:renotificacao, 'checkeds':checkeds},
+			  data: {rnTemplate:rnTemplate,equipamento:equipamento,severidade:severidade,rnCliente:rnCliente,rnEmpresa:rnEmpresa,tempoNotificaCliente:tempoNotificaCliente,tempoNotificaEmpresa:tempoNotificaEmpresa,renotificacao:renotificacao, 'checkeds':checkeds},
 			  
 			  success: function(data){
 
@@ -175,6 +219,23 @@
 			return false;
 		}); // fim submit
 		
+		//@Marca e desmarca
+		jQuery("#todos").on('click',function(){
+
+			jQuery(".selecionado").each(function(){
+
+				if(jQuery(this).prop("checked")){
+
+					 jQuery(this).prop("checked", false);
+			     
+				}else{
+
+					jQuery(this).prop("checked", true);
+				}
+			});	
+
+		});
+		// fim da funcionalidade
 
 	});
 </script>

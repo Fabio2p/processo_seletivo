@@ -23,13 +23,13 @@ class Dbo extends Model{
 
       $this->setup = @$seta;
 
-      $this->host = $this->setup['HOST'];
+      $this->host = @$this->setup['HOST'];
 
-      $this->base = $this->setup['BASE'];
+      $this->base = @$this->setup['BASE'];
 
-      $this->user = $this->setup['USER'];
+      $this->user = @$this->setup['USER'];
 
-      $this->pass = $this->setup['PASS'];
+      $this->pass = @$this->setup['PASS'];
 
       parent::__construct();
 

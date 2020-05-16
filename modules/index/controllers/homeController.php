@@ -31,7 +31,22 @@ class Home extends Controller{
         $exibeTrigers = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.get", $listaTriggers);
 
 
+
+       //@Regras aplicada ao template, onde a extração dos dados do mesmo será necessario para a entregas dos dados entre o zabbix e o sistema 
+       $regras_template = array(
+
+            "params" => array("templateid"),
+
+            "selectTriggers" => array('triggerid')
+       ); 
+
+       $lista_regras_templates =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "template.get", $regras_template);
+
+     //fim da aplicação da regra do template  
+
         $data['regras_lista_hosts'] = $exibeTrigers;
+
+        $data['regras_lista_template'] = $lista_regras_templates;
 
 
         //@method override: chama o método view 
@@ -77,8 +92,11 @@ class Home extends Controller{
        //Id da empresa
        $idEmpresa = '1';
 
+       //Adiciona o id do Template
+        $idTemplate = isset($_POST['rnTemplate']) ? $_POST['rnTemplate'] : 0;
+
         //Adiciona o id do Equipamento
-        $equipamento = $_POST['equipamento'];
+        $equipamento = isset($_POST['equipamento']) ? $_POST['equipamento'] : 0;
 
         $idTriggers = $_POST['checkeds']; 
 
@@ -106,7 +124,7 @@ class Home extends Controller{
         for($i=0;$i<$count;$i++):
 
 
-            $noc->cadastroRegrasNegocios($idEmpresa,$equipamento,$severidade,$notificaCliente,$notificaEmpresa,$tempo_notifica_cliente,$tempo_notifica_empresa,$renotifica_interacao,$idTriggers[$i]);
+            $noc->cadastroRegrasNegocios($idEmpresa,$idTemplate,$equipamento,$severidade,$notificaCliente,$notificaEmpresa,$tempo_notifica_cliente,$tempo_notifica_empresa,$renotifica_interacao,$idTriggers[$i]);
     
         endfor;
     }
@@ -125,5 +143,64 @@ class Home extends Controller{
     		echo "Falha ao cadastrar os dados";	
 
     	endif;	*/
+    }
+
+
+    public function refreshDados(){
+
+        $ApiZabbix = $this->model('/index','ApiZabbix');
+
+        $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
+
+        $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
+
+
+        $noc = $this->model("/index", 'Nocs');
+
+        //Id da empresa
+        $idEmpresa = 1;
+
+        //@APlica as regras de Negocios no template
+        $regras_template = array(
+
+            "params" => array('templateid'),
+
+            "selectTriggers" => array('triggerid')
+        );
+
+        //@Extrai os dados do template
+        $rnTemplates = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "template.get",$regras_template);
+
+        //Extrai os dados das regras aplicadas
+        $extraiRegras = $noc->selecionaNoc_notificacao($idEmpresa);
+
+
+         //@Simulação de Hosts 
+        $host = $noc->selecionaNoc_host($idEmpresa);
+
+
+        foreach($rnTemplates->result as $tmp => $tmpId):
+
+         foreach($host as $hostEmpresa):
+
+            foreach($extraiRegras as $notificacoes):
+
+                if($notificacoes['IDTEMPLATE'] == $tmpId->templateid && $notificacoes['IDEQUIPAMENTO'] == 0 || $notificacoes['IDEQUIPAMENTO'] == null):
+
+                    echo "Severidade do Template: ". $notificacoes['SEVERIDADE'] .'<br>';
+
+                    elseif($notificacoes['IDEQUIPAMENTO'] == $hostEmpresa['HOSTID']):
+                    
+                    echo "Severidade do Equipamento: ". $notificacoes['SEVERIDADE'] .'<br>';
+
+                endif; 
+
+            endforeach;    
+
+         endforeach;    
+
+        endforeach;    
+
+        //@Fim das Regras no template
     }
 }
