@@ -203,4 +203,44 @@ class Home extends Controller{
 
         //@Fim das Regras no template
     }
+
+    public function addBlobAzure(){
+
+       $this->library("vendor/autoload");
+
+       //$this->library("vendor/random_string");
+
+
+       //$obj01 = new MicrosoftAzure\Storage\Blob\BlobRestProxy;
+       
+       //$obj02  = new MicrosoftAzure\Storage\Common\Exceptions\ServiceException;
+       
+       $obj03  = new MicrosoftAzure\Storage\Blob\Models\ListBlobsOptions;
+       
+       $obj04  = new MicrosoftAzure\Storage\Blob\Models\CreateContainerOptions;
+       
+       $obj05  = new MicrosoftAzure\Storage\Blob\Models\PublicAccessType;
+
+       echo "Classe: ListBlobsOptions";
+       
+       echo "<hr>";
+        var_dump($obj03);
+       echo "<hr>";
+
+
+       echo "Classe: CreateContainerOptions";
+       
+       echo "<hr>";
+        var_dump($obj04);
+       echo "<hr>";  
+
+
+        echo "Classe: PublicAccessType";
+       
+       echo "<hr>";
+        var_dump($obj05);
+       echo "<hr>";  
+       
+
+    }
 }
