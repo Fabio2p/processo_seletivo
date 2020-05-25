@@ -1,4 +1,7 @@
 <?php
+use MicrosoftAzure\Storage\Blob\Models\PublicAccessType;
+
+use MicrosoftAzure\Storage\Blob\BlobRestProxy;
 /**
  * Author: Fábio Silveira dos Anjos
  * 
@@ -210,16 +213,33 @@ class Home extends Controller{
 
        //$this->library("vendor/random_string");
 
-
-       //$obj01 = new MicrosoftAzure\Storage\Blob\BlobRestProxy;
-       
        //$obj02  = new MicrosoftAzure\Storage\Common\Exceptions\ServiceException;
        
        $obj03  = new MicrosoftAzure\Storage\Blob\Models\ListBlobsOptions;
        
        $obj04  = new MicrosoftAzure\Storage\Blob\Models\CreateContainerOptions;
+
+       $urlAzure = "DefaultEndpointsProtocol=https;AccountName=".getenv('ACCOUNT_NAME').";AccountKey=".getenv('ACCOUNT_KEY');
+
+     
+       $blobClient = BlobRestProxy::createBlobService($urlAzure);
        
-       $obj05  = new MicrosoftAzure\Storage\Blob\Models\PublicAccessType;
+       $obj04->setPublicAccess(PublicAccessType::CONTAINER_AND_BLOBS);
+
+       $obj04->addMetaData("key1", "value1");
+       
+       $obj04->addMetaData("key2", "value2");
+
+
+       try{
+
+         $blobClient->createContainer($containerName, $createContainerOptions);
+       
+       }catch(ServiceException $e){
+
+
+
+       }
 
        echo "Classe: ListBlobsOptions";
        
@@ -232,13 +252,6 @@ class Home extends Controller{
        
        echo "<hr>";
         var_dump($obj04);
-       echo "<hr>";  
-
-
-        echo "Classe: PublicAccessType";
-       
-       echo "<hr>";
-        var_dump($obj05);
        echo "<hr>";  
        
 
