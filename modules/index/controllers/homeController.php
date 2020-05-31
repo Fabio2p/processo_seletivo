@@ -178,11 +178,13 @@ class Home extends Controller{
         
         /*Fim da melhorias*/
         
-        $aberto = @$ApiZabbix->buscaEventoAbertoApiZabbix($urlApi, $login->result, $login->id, "event.get", $data_busca_incidente);
+        $aberto = @$ApiZabbix->buscaEventoAbertoApiZabbix($urlApi, $login->result, $login->id, "event.get");
 
 
          foreach($aberto->result as $i => $eventos):
 
+            echo "Incidentes Aberto: ". $eventos->eventid .'<br>';
+            echo "Incidentes Fechado: ". $eventos->r_eventid .'<br>';
 
         if($eventos->r_eventid != 0):  
 
@@ -210,6 +212,63 @@ class Home extends Controller{
 
         //@Fim das Regras no template
     }
+
+    public function refreshDadosHistorico(){
+
+        $ApiZabbix = $this->model('/index','ApiZabbix');
+
+        $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
+
+        $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
+
+        
+        //@Aqui entra os eventod cadastrado no banco
+        $ivento_id = '160';
+
+        $incidente_aberto = array("output" => array('eventid','r_eventid'),
+          
+          "filter" => array('value' => 1, "eventid" =>  $ivento_id)
+
+        );
+       
+        
+        $aberto = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "event.get",$incidente_aberto);
+
+        foreach($aberto->result as $indice => $eventos){
+
+
+          if($ivento_id == $eventos->eventid):
+
+            $incidente_fechado = array(
+
+                'output' => array('eventid', 'clock','value','name'),
+
+                "filter" => array('value' => 0, "eventid" => $eventos->r_eventid)
+              );
+
+
+            $fechado = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "event.get",$incidente_fechado);
+
+            // echo "<pre>";
+            //   print_r($fechado->result);
+            // echo "</pre>";
+            
+            for($i =0; $i <= $indice; $i++):
+
+              $data_encerramento = date("Y-m-d H:i:s ", @$fechado->result[$i]->clock);
+
+              echo $data_encerramento;  
+            
+            endfor;
+        
+
+          endif;  
+
+        }  
+       
+    }
+
+
 
     public function addBlobAzure(){
 
