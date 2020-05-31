@@ -4,10 +4,10 @@
 
     $DESENVOLVIMENTO = [
 
-       'HOST' => "",
-       'BASE' => '',
-       'USER' => '',
-       'PASS' => '',
+       'HOST' => "172.17.0.3",
+       'BASE' => 'zabbix',
+       'USER' => 'fabio',
+       'PASS' => '5505',
 
     ];
 

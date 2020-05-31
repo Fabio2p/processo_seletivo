@@ -433,10 +433,10 @@ class ApiZabbix extends Dbo{
                     //"limit" => 10,
                     
                     //"time_from" =>  1583712000, //1580515200,
-                    "time_from" =>  $pega_data,
-                    //"time_till" =>1577923200,
+                    "problem_time_from" =>  $pega_data,
+                    "time_till" =>$pega_data,
 
-                    //"problem_time_from" => 1583712000,
+                    "problem_from" => $pega_data,
                     
                     "sortfield" => array('clock'),
 

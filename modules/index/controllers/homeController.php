@@ -2,6 +2,7 @@
 use MicrosoftAzure\Storage\Blob\Models\PublicAccessType;
 
 use MicrosoftAzure\Storage\Blob\BlobRestProxy;
+
 /**
  * Author: Fábio Silveira dos Anjos
  * 
@@ -157,52 +158,55 @@ class Home extends Controller{
 
         $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
 
+        /*Melhoria na data de busca de incidentes do zabbix*/
+         
+        //@Monta a data para buscar os incidentes no zabbix
+        $monta_data = date("Y-m-d H:i:00", strtotime('-30 minutes'));
 
-        $noc = $this->model("/index", 'Nocs');
+        //@COnverte para data UNIX
+        $converte_data = strtotime($monta_data);
 
-        //Id da empresa
-        $idEmpresa = 1;
+        $add_data = new DateTime("@$converte_data");
+          
+        $add_data->format('U');
 
-        //@APlica as regras de Negocios no template
-        $regras_template = array(
-
-            "params" => array('templateid'),
-
-            "selectTriggers" => array('triggerid')
-        );
-
-        //@Extrai os dados do template
-        $rnTemplates = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "template.get",$regras_template);
-
-        //Extrai os dados das regras aplicadas
-        $extraiRegras = $noc->selecionaNoc_notificacao($idEmpresa);
+        $data_busca_incidente = $add_data->getTimestamp();
 
 
-         //@Simulação de Hosts 
-        $host = $noc->selecionaNoc_host($idEmpresa);
+       // echo $data_busca_incidente;
+
+        
+        /*Fim da melhorias*/
+        
+        $aberto = @$ApiZabbix->buscaEventoAbertoApiZabbix($urlApi, $login->result, $login->id, "event.get", $data_busca_incidente);
 
 
-        foreach($rnTemplates->result as $tmp => $tmpId):
+         foreach($aberto->result as $i => $eventos):
 
-         foreach($host as $hostEmpresa):
 
-            foreach($extraiRegras as $notificacoes):
+        if($eventos->r_eventid != 0):  
 
-                if($notificacoes['IDTEMPLATE'] == $tmpId->templateid && $notificacoes['IDEQUIPAMENTO'] == 0 || $notificacoes['IDEQUIPAMENTO'] == null):
+           $fechado = @$ApiZabbix->buscaEventoFechadoApiZabbix($urlApi, $login->result, $login->id, "event.get",$data_busca_incidente);
 
-                    echo "Severidade do Template: ". $notificacoes['SEVERIDADE'] .'<br>';
+          //echo "Incidentes Aberto: ". $eventos->r_eventid .'<br>';
 
-                    elseif($notificacoes['IDEQUIPAMENTO'] == $hostEmpresa['HOSTID']):
-                    
-                    echo "Severidade do Equipamento: ". $notificacoes['SEVERIDADE'] .'<br>';
+           foreach($fechado->result as $fecha):
 
-                endif; 
+              if($eventos->r_eventid === $fecha->eventid):
 
-            endforeach;    
+                echo "Incidentes Encerrados: ". $eventos->eventid .'<br>';
 
-         endforeach;    
+                echo "Id do Incidente: ". $fecha->eventid .'<br>';
 
-        endforeach;    
+
+
+              endif;  
+
+           endforeach; 
+
+        endif; 
+
+        endforeach;  
 
         //@Fim das Regras no template
     }
@@ -255,5 +259,12 @@ class Home extends Controller{
        echo "<hr>";  
        
 
+    }
+
+    public function interacao(){
+
+      
+      $this->view("/index", 'checkUpload');
+   
     }
 }
