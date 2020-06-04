@@ -223,7 +223,7 @@ class Home extends Controller{
 
         
         //@Aqui entra os eventod cadastrado no banco
-        $ivento_id = '160';
+        $ivento_id = '16';
 
         $incidente_aberto = array("output" => array('eventid','r_eventid'),
           
@@ -271,59 +271,91 @@ class Home extends Controller{
 
 
     public function addBlobAzure(){
+       $ApiZabbix = $this->model('/index','ApiZabbix');
 
-       $this->library("vendor/autoload");
+        $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
 
-       //$this->library("vendor/random_string");
-
-       //$obj02  = new MicrosoftAzure\Storage\Common\Exceptions\ServiceException;
-       
-       $obj03  = new MicrosoftAzure\Storage\Blob\Models\ListBlobsOptions;
-       
-       $obj04  = new MicrosoftAzure\Storage\Blob\Models\CreateContainerOptions;
-
-       $urlAzure = "DefaultEndpointsProtocol=https;AccountName=".getenv('ACCOUNT_NAME').";AccountKey=".getenv('ACCOUNT_KEY');
-
-     
-       $blobClient = BlobRestProxy::createBlobService($urlAzure);
-       
-       $obj04->setPublicAccess(PublicAccessType::CONTAINER_AND_BLOBS);
-
-       $obj04->addMetaData("key1", "value1");
-       
-       $obj04->addMetaData("key2", "value2");
+        $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
 
 
-       try{
-
-         $blobClient->createContainer($containerName, $createContainerOptions);
-       
-       }catch(ServiceException $e){
+            //@Lista host para serem customizados de acordo com a necessidade da empresa
+        $exibeTrigers = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "hostgroup.get");
 
 
 
-       }
+       //@Regras aplicada ao template, onde a extração dos dados do mesmo será necessario para a entregas dos dados entre o zabbix e o sistema 
+       $regras_template = array(
 
-       echo "Classe: ListBlobsOptions";
-       
-       echo "<hr>";
-        var_dump($obj03);
-       echo "<hr>";
+            "params" => array("templateid"),
+
+            "selectTriggers" => array('triggerid')
+       ); 
+
+       $lista_regras_templates =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "template.get", $regras_template);
+
+     //fim da aplicação da regra do template  
+
+        $data['regras_lista_hosts'] = $exibeTrigers;
+
+        $data['regras_lista_template'] = $lista_regras_templates;
 
 
-       echo "Classe: CreateContainerOptions";
-       
-       echo "<hr>";
-        var_dump($obj04);
-       echo "<hr>";  
+        //@method override: chama o método view 
+        $this->view("/index",'cadastro_host', $data);
+
+
        
 
     }
 
     public function interacao(){
 
-      
-      $this->view("/index", 'checkUpload');
+
+        $ApiZabbix = $this->model('/index','ApiZabbix');
+
+        $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
+
+        $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
+
+        
+        $grupos    = $_POST['GruposHost'];
+
+        $templates = $_POST['itTemplate'];
+
+        $host = array(
+
+          'host' => "Equipamento 01",
+
+          'name' => "",
+
+          'description' => "Implorando pelo retorno do id Host",
+
+          'interfaces' => array('type' => 1, 
+                                'main' => 1, 
+                                'useip' => 1, 
+                                'ip' => '192.168.2.3',
+                                'dns' => '',
+                                'port' => '10050'),
+
+          'groups'     => $grupos,
+
+          'templates'  => $templates,
+
+          'macros'     => array('macro' => '{$USER_ID}','value' => "123321")
+
+        );
+
+
+        $GruposHosts = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.create",$host);
+
+        echo "<pre>";
+          print_r($templates);
+        echo "</pre>";
+
+
+        echo "<pre>";
+          print_r($GruposHosts);
+        echo "</pre>";
    
     }
 }
