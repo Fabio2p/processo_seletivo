@@ -358,4 +358,78 @@ class Home extends Controller{
         echo "</pre>";
    
     }
+
+    public function endpoint(){
+
+
+        $ApiZabbix = $this->model('/index','ApiZabbix');
+
+        $url1 = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.1/zabbix/api_jsonrpc.php");
+
+        $url2 = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.2/zabbix/api_jsonrpc.php");
+
+        $url3 = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
+
+        $url4 = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.4/zabbix/api_jsonrpc.php");
+
+
+         $api1 = $ApiZabbix->responseApiZabbixEndPoint($url1);
+
+         $api2 = $ApiZabbix->responseApiZabbixEndPoint($url2);
+
+         $api3 = $ApiZabbix->responseApiZabbixEndPoint($url3);
+
+         $api4 = $ApiZabbix->responseApiZabbixEndPoint($url4);
+
+         if($api1['http_code'] == 412):
+
+             $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.1/zabbix/api_jsonrpc.php");
+
+             $mensagem = "Appliance 01";
+
+
+          elseif($api2['http_code'] == 412):
+          
+
+             $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.2/zabbix/api_jsonrpc.php");
+
+             $mensagem = "Appliance 02";
+
+          elseif($api3['http_code'] == 412):
+          
+
+             $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
+
+             $mensagem = "Appliance 03";
+
+           elseif($api4['http_code'] == 412):
+          
+
+             $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
+
+             $mensagem = "Appliance 04";        
+
+         endif; 
+        
+
+
+          $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
+
+
+        /*echo "<pre>";
+          print_r($api1);
+        echo "</pre>";*/
+        
+
+        echo $mensagem;
+
+        //$login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
+        
+        $teste = $ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.get");
+
+
+        echo "<pre>";
+          print_r($teste->result);
+        echo "</pre>";
+    }
 }

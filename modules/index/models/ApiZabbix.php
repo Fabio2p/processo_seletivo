@@ -499,8 +499,29 @@ class ApiZabbix extends Dbo{
         return $this->requestApiZabbixCurl($urlApiZabbix, $rsJson);
 
      
-}
+    }
+    
+    public function responseApiZabbixEndPoint($url){
 
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+
+        curl_setopt($ch, CURLOPT_FAILONERROR, TRUE);
+
+        $content = curl_exec($ch);
+
+        $info = curl_getinfo($ch);
+
+        return $info;
+
+    }
 
     /*@METHOD:
      *
