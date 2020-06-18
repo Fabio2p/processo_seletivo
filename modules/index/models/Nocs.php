@@ -76,5 +76,32 @@ class Nocs extends Dbo{
 
         return $stm->fetchAll();
     }
+    
+    public function backups($id_empresa, $bkp){
+        
+      $query = "INSERT INTO rotina_backup SET ID_EMPRESA =:ID_EMPRESA, BACKUP =:BACKUP";
+      
+      $stm = $this->db->prepare($query);
+      
+      $stm->bindValue(":ID_EMPRESA", $id_empresa);
+      
+      $stm->bindValue(":BACKUP", $bkp);
+      
+      $stm->execute();
+      
+        
+    }
+    
+    public function getBackup(){
+        
+        
+        $query = "SELECT * FROM rotina_backup";
+        
+        $stm = $this->db->prepare($query);
+     
+        $stm->execute();
+        
+        return $stm->fetchAll();
+    }
 
 }

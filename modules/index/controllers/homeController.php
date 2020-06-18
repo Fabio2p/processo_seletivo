@@ -432,4 +432,130 @@ class Home extends Controller{
           print_r($teste->result);
         echo "</pre>";
     }
+    
+    public function bkps(){
+        
+        $ApiZabbix = $this->model('/index','ApiZabbix');
+        
+        $noc = $this->model("/index", 'Nocs');
+        
+        $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
+        
+        $mensagem = "Appliance 04";
+        
+      
+        $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
+        
+       
+        //@Regras aplicada ao template, onde a extração dos dados do mesmo será necessario para a entregas dos dados entre o zabbix e o sistema
+        
+//         $regras_template = array(
+            
+//            "params" => array("templateid"),
+            
+//            "selectTriggers" => array('triggerid','description'),
+            
+//            "selectGroups" => array('groupid','name','hostids'),
+            
+//            "selectApplications" => array('applicationid','name'),
+            
+//            "selectItems" => array('itemid','name'),
+            
+//            "selectMacros" => array('macroid','name'),
+            
+//            "selectParentTemplates" => array('templateid','name'),
+            
+//            "selectParentTemplates" => array('templateid','name'),
+            
+//         );
+        
+//         $lista_regras_templates =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.get", $regras_template);
+        
+//         $teste = json_encode($lista_regras_templates->result);
+        
+        
+//         $noc->backups(1, $teste);
+        
+//         echo "<pre>";
+//            print_r($teste);
+//         echo "</pre>";
+        
+        $teste = $noc->getBackup();
+        
+        $t = json_decode($teste[0]['BACKUP']);
+        
+//         echo "<pre>";
+//             print_r($t);
+//         echo "</pre>";
+        
+      
+     
+echo '<?xml version="1.0" encoding="UTF-8"?>';
+
+echo '<zabbix_export>';
+
+echo '<version>4.2</version>';
+
+echo '<date>2020-06-16T23:59:13Z</date>';
+
+echo '<groups>';
+   
+   echo '</groups>';
+        
+     echo "<hosts>";
+     
+       foreach ($t as $i => $k):
+          
+        echo "<host>";
+         
+        echo "<host>". $k->host ."</host>";
+            
+          echo "<groups>";
+               foreach ($k->groups as $group):
+               echo "<group>". $group->name ."</group>";
+               endforeach;
+           echo "</groups>";
+           
+           echo "<templates>";
+               foreach ($k->parentTemplates as $template):
+                echo "<template>". $template->name ."</template>";
+               endforeach;
+           echo "</templates>";
+           
+           echo "<items>";
+               foreach ($k->items as $item):
+               echo "<item>" .$item->name ."</item>";
+               endforeach;
+           echo "</items>"; 
+           
+           echo "<triggers>";
+               foreach ($k->triggers as $item):
+               echo "<trigger>" .$item->description ."</trigger>";
+               endforeach;
+           echo "</triggers>"; 
+           
+           echo "<applications>";
+                foreach ($k->applications as $application):
+                echo "<application>". $application->name ."</application>";
+               endforeach;
+           echo "</applications>";
+           
+           
+           echo "<macros>";
+               foreach ($k->macros as $macro):
+                echo "<macro>". $macro->name ."</macro>";
+               endforeach;
+            echo "</macros>";
+               
+           echo "</host>";
+       endforeach;
+       
+    echo "</hosts>";
+ 
+ echo "</zabbix_export>";   
+    }
+    
+   
+    
+    
 }
