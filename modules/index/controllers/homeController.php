@@ -433,6 +433,13 @@ class Home extends Controller{
         echo "</pre>";
     }
     
+    /*
+     * 
+     * 
+     * 
+     * 
+     * */
+    
     public function bkps(){
         
         $ApiZabbix = $this->model('/index','ApiZabbix');
@@ -449,32 +456,34 @@ class Home extends Controller{
        
         //@Regras aplicada ao template, onde a extração dos dados do mesmo será necessario para a entregas dos dados entre o zabbix e o sistema
         
-//         $regras_template = array(
+        $regras_template = array(
             
-//            "params" => array("templateid"),
+           "params" => array('output' => 'extend'),
             
-//            "selectTriggers" => array('triggerid','description'),
+           //"selectTriggers" => array('triggerid','description'),
             
-//            "selectGroups" => array('groupid','name','hostids'),
+           "selectGroups" => array('groupid','name','hostids'),
             
-//            "selectApplications" => array('applicationid','name'),
+           "selectApplications" => array('applicationid','name'),
             
-//            "selectItems" => array('itemid','name'),
+           "selectItems" => array('itemid','name'),
             
-//            "selectMacros" => array('macroid','name'),
+           "selectMacros" => array('macro','value'),
             
-//            "selectParentTemplates" => array('templateid','name'),
+           "selectParentTemplates" => array('templateid','name'),
             
-//            "selectParentTemplates" => array('templateid','name'),
+           "selectParentTemplates" => array('templateid','name'),
             
-//         );
+            "selectInterfaces" => array('main','ip', 'dns','port','type','useip','bulk','interface_ref'),
+            
+        );
         
-//         $lista_regras_templates =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.get", $regras_template);
+        $lista_regras_templates =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.get", $regras_template);
         
-//         $teste = json_encode($lista_regras_templates->result);
+        $teste = json_encode($lista_regras_templates->result);
         
         
-//         $noc->backups(1, $teste);
+        $noc->backups(1, $teste);
         
 //         echo "<pre>";
 //            print_r($teste);
@@ -490,69 +499,258 @@ class Home extends Controller{
         
       
      
-echo '<?xml version="1.0" encoding="UTF-8"?>';
-
-echo '<zabbix_export>';
-
-echo '<version>4.2</version>';
-
-echo '<date>2020-06-16T23:59:13Z</date>';
-
-echo '<groups>';
-   
-   echo '</groups>';
+        $xml = "<?xml version='1.0' encoding='UTF-8'?>\n";
         
-     echo "<hosts>";
-     
-       foreach ($t as $i => $k):
-          
-        echo "<host>";
-         
-        echo "<host>". $k->host ."</host>";
+        $xml .= "<zabbix_export>\n";
+
+            $xml .= "\t<version>4.2</version>\n";
             
-          echo "<groups>";
-               foreach ($k->groups as $group):
-               echo "<group>". $group->name ."</group>";
-               endforeach;
-           echo "</groups>";
-           
-           echo "<templates>";
-               foreach ($k->parentTemplates as $template):
-                echo "<template>". $template->name ."</template>";
-               endforeach;
-           echo "</templates>";
-           
-           echo "<items>";
-               foreach ($k->items as $item):
-               echo "<item>" .$item->name ."</item>";
-               endforeach;
-           echo "</items>"; 
-           
-           echo "<triggers>";
-               foreach ($k->triggers as $item):
-               echo "<trigger>" .$item->description ."</trigger>";
-               endforeach;
-           echo "</triggers>"; 
-           
-           echo "<applications>";
-                foreach ($k->applications as $application):
-                echo "<application>". $application->name ."</application>";
-               endforeach;
-           echo "</applications>";
-           
-           
-           echo "<macros>";
-               foreach ($k->macros as $macro):
-                echo "<macro>". $macro->name ."</macro>";
-               endforeach;
-            echo "</macros>";
+            $xml .= "\t<date>2020-06-16T23:59:13Z</date>\n";
+        
+            $xml .= "\t<groups>\n";
                
-           echo "</host>";
-       endforeach;
+            $xml .= "\t</groups>\n";
+                
+        $xml .= "\t<hosts>\n";
+     
+           foreach ($t as $i => $k):
+           
+           $xml .= "\t\t<host>\n";
+           
+            $xml .= "\t\t\t<host>". $k->host ."</host>\n";
+            $xml .= "\t\t\t<name>". $k->name ."</name>\n";
+            $xml .= "\t\t\t<description>". $k->description ."</description>\n";
+            
+            if(!empty($k->proxy)){
+                
+                $xml .= "\t\t\t<proxy>". $k->proxy ."</proxy>\n";
+            
+            }else{
+                
+                $xml .= "\t\t\t<proxy/>\n";
+            }
+            
+            $xml .= "\t\t\t<status>". $k->status ."</status>\n";
+            $xml .= "\t\t\t<ipmi_authtype>". $k->ipmi_authtype ."</ipmi_authtype>\n";
+            $xml .= "\t\t\t<ipmi_privilege>". $k->ipmi_privilege ."</ipmi_privilege>\n";
+         
+            $xml .= "\t\t\t<ipmi_username>". $k->ipmi_username ."</ipmi_username>\n";
+            
+            if(!empty($k->ipmi_password)){
+                
+                $xml .= "\t\t\t<ipmi_password>". $k->ipmi_password ."</ipmi_password>\n";
+                
+            }else{
+                
+                $xml .= "\t\t\t<ipmi_password/>\n";
+            }
+            
+            $xml .= "\t\t\t<tls_connect>". $k->tls_connect ."</tls_connect>\n";
+            $xml .= "\t\t\t<tls_accept>". $k->tls_accept ."</tls_accept>\n";
+            
+            if(!empty($k->tls_issuer)){
+                
+                $xml .= "\t\t\t<tls_issuer>". $k->tls_issuer ."</tls_issuer>\n";
+                
+            }else{
+                
+                $xml .= "\t\t\t<tls_issuer/>\n";
+            }
+            
+            if(!empty($k->tls_subject)){
+                
+                $xml .= "\t\t\t<tls_subject>". $k->tls_subject ."</tls_subject>\n";
+                
+            }else{
+                
+                $xml .= "\t\t\t<tls_subject/>\n";
+            }
+            
+            if(!empty($k->tls_psk_identity)){
+                
+                $xml .= "\t\t\t<tls_psk_identity>". $k->tls_psk_identity ."</tls_psk_identity>\n";
+                
+            }else{
+                
+                $xml .= "\t\t\t<tls_psk_identity/>\n";
+            }
+            
+            if(!empty($k->tls_psk)){
+                
+                $xml .= "\t\t\t<tls_psk>". $k->tls_psk ."</tls_psk>\n";
+                
+            }else{
+                
+                $xml .= "\t\t\t<tls_psk/>\n";
+            }
+            
+            if(!empty($k->parentTemplates[0]->name)):
+            $xml .= "\t\t\t<templates>\n";
+            
+            foreach ($k->parentTemplates as $template):
+            $xml .="\t\t\t\t<template>\n";
+                $xml .= "\t\t\t\t\t<name>". $template->name ."</name>\n";
+            $xml .="\t\t\t\t</template>\n";
+            endforeach;
+            
+            $xml .= "\t\t\t</templates>\n";
+            
+            else:
+            
+            $xml .= "\t\t\t<templates/>\n";
+            
+            endif;    
+            
+            if(!empty($k->groups[0]->name)):
+            
+                $xml .= "\t\t\t<groups>\n";
+               
+                   foreach ($k->groups as $group):
+         
+                     $xml .= "\t\t\t\t<group>\n";
+                        $xml .= "\t\t\t\t\t<name>". $group->name ."</name>\n";
+                     $xml .= "\t\t\t\t</group>\n";
+            
+                   endforeach;
+                    
+                 $xml .= "\t\t\t</groups>\n";
+                 
+                 else:
+                 
+                 $xml .= "\t\t\t<groups/>\n";
+                 
+             endif; 
+            
        
-    echo "</hosts>";
+                 $xml .= "\t\t\t<interfaces>\n";
+               
+                 foreach ($k->interfaces as $item):
+                    $xml .= "\t\t\t\t<interface>\n";
+                     
+                        $xml .= "\t\t\t\t\t<default>".$item->main ."</default>\n";
+                        
+                        $xml .= "\t\t\t\t\t<type>".$item->type ."</type>\n";
+                            
+                        $xml .= "\t\t\t\t\t<useip>".$item->useip ."</useip>\n";
+                            
+                        $xml .= "\t\t\t\t\t<ip>".$item->ip ."</ip>\n";
+                        
+                        if(!empty($k->dns)){
+                            
+                            $xml .= "\t\t\t\t\t<dns>". $k->dns ."</dns>\n";
+                            
+                        }else{
+                            
+                            $xml .= "\t\t\t\t\t<dns/>\n";
+                        }
+                            
+                        $xml .= "\t\t\t\t\t<port>".$item->port ."</port>\n";
+                            
+                        $xml .= "\t\t\t\t\t<bulk>".$item->bulk ."</bulk>\n";
+                        
+                        if(!empty($k->interface_ref)){
+                            
+                            $xml .= "\t\t\t\t\t<interface_ref>". $k->interface_ref ."</interface_ref>\n";
+                            
+                        }else{
+                            
+                            $xml .= "\t\t\t\t\t<interface_ref/>\n";
+                        }
+                      
+                    $xml .= "\t\t\t\t</interface>\n";
+                   endforeach;
+               
+                 $xml .= "\t\t\t</interfaces>\n";
+               
+            
+//               if(!empty($k->triggers[0]->description)):
+              
+//                  $xml .= "\t\t\t<triggers>\n";
+//                    foreach ($k->triggers as $item):
+//                     $xml .= "\t\t\t\t<trigger>" .$item->description ."</trigger>\n";
+//                    endforeach;
+//                  $xml .= "\t\t\t</triggers>\n"; 
+//                 else:
+                
+//                  $xml .= "\t\t\t<triggers/>\n"; 
+              
+//               endif;   
+             
+              if(!empty($k->applications[0]->name)):
+                 $xml .= "\t\t\t<applications>\n";
+                    foreach ($k->applications as $application):
+                    $xml .= "\t\t\t\t<application>\n";
+                        $xml .= "\t\t\t\t\t<name>". $application->name ."</name>\n";
+                    $xml .= "\t\t\t\t</application>\n";
+                   endforeach;
+                   
+                 $xml .= "\t\t\t</applications>\n";
+                 
+                 else:
+                 
+                 $xml .= "\t\t\t<applications/>\n";
+                 
+              endif;   
+              
+//               if(!empty($k->items[0]->name)):
+//                   $xml .= "\t\t\t<items>\n";
+              
+//                   foreach ($k->items as $itens):
+//                   $xml .= "\t\t\t\t<item>\n";
+//                   $xml .= "\t\t\t\t\t<name>". $itens->name ."</name>\n";
+//                   $xml .= "\t\t\t\t</item>\n";
+//                   endforeach;
+                  
+//                 $xml .= "\t\t\t</items>\n";
+              
+//               else:
+              
+//               $xml .= "\t\t\t<items/>\n";
+              
+//               endif;   
+            
+             if(!empty($k->macros[0]->macro)):
+       
+           $xml .= "\t\t\t<macros>\n";
+               foreach ($k->macros as $macro):
+                 
+       
+                    $xml  .= "\t\t\t\t<macro>\n";
+                          $xml .= "\t\t\t\t\t<macro>". $macro->macro ."</macro>\n";
+                          $xml .= "\t\t\t\t\t<value>". $macro->value ."</value>\n";
+                       $xml .="\t\t\t\t</macro>\n";
+                
+               
+               endforeach;
+           $xml .= "\t\t\t</macros>\n";
+           
+           
+           else:
+           
+           $xml .= "\t\t\t<macros/>\n";
+           
+           endif;
+           
+                 if(!empty($k->tags)){
+                     
+                     $xml .= "\t\t\t<tags>". $k->tags ."</tags>\n";
+                     
+                 }else{
+                     
+                     $xml .= "\t\t\t<tags/>\n";
+                 }
+           $xml .= "\t\t</host>\n";
+           
+           endforeach;
+       
+       $xml .= "\t</hosts>\n";
  
- echo "</zabbix_export>";   
+       $xml .= "</zabbix_export>";   
+       
+       header('Content-type: text/xml');
+       
+       header('Content-Disposition: attachment; filename="hosts_sdbusiness.xml"');
+       echo $xml;
     }
     
    
