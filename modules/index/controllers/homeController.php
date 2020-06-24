@@ -432,7 +432,62 @@ class Home extends Controller{
           print_r($teste->result);
         echo "</pre>";
     }
+
+    /*
+    *
+    */
     
+    public function rotinasbackup(){
+
+        $ApiZabbix = $this->model('/index','ApiZabbix');
+        
+        $noc = $this->model("/index", 'Nocs');
+        
+        $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
+        
+        
+        $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
+
+
+        $dados_template = array(
+             "params" => array('output' => 'extend'),
+            
+           //"selectTriggers" => array('triggerid','description'),
+            
+           "selectGroups" => array('groupid','name','hostids'),
+            
+           "selectApplications" => array('applicationid','name'),
+            
+           "selectItems" => array('itemid','name','type','snmp_community'),
+            
+           "selectMacros" => array('macro','value'),
+        
+            "selectInterfaces" => array('main','ip', 'dns','port','type','useip','bulk','interface_ref'),
+
+          "selectMappings" => array('valuemapid')
+
+        );
+
+
+        $grupos =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "template.get",$dados_template);
+
+        echo "<pre>";
+          print_r($grupos);
+        echo "</pre>";
+
+        // $id_empresa = '1';
+
+        //  foreach($grupos->result as $template):
+        //   $noc->backups_tempates($id_empresa,$template->groups[0]->groupid,$template->templateid, $template->name);
+        // endforeach;
+
+        //foreach($grupos->result as $grupos):
+          //$noc->backups_groups($id_empresa,$grupos->groupid, $grupos->name);
+        //endforeach;
+
+
+    }
+
     /*
      * 
      * 
@@ -753,7 +808,54 @@ class Home extends Controller{
        echo $xml;
     }
     
-   
+   public function atualizaUrl(){
+       
+       echo "Data Atual: ". date("Y-m-d h:i:s");
+   }
     
+
+   public function passagemPorReferencia(&$valor, &$chave){
+
+     $valor = 100;
+
+     return $valor;
+   }
+
+
+    public function czpe(){
+
+       $ApiZabbix = $this->model('/index','ApiZabbix');
+
+       $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
+        
+         $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
+
+       $substitui = array(
+                          
+                          "hostid" => '10303',
+
+                          "templates" => array('10261'),
+
+                          "templates_link" => array('10097')
+                        
+                        );
+
+
+        $atualiza =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.update", $substitui);
+
+       echo "<pre>";
+          print_r($atualiza);
+       echo "</pre>";
+        
+    
+    }
+
+    public function disponibilidade(){
+        header('Refresh:60');
+        $this->modelCustom('/index','Ping');
+
+       $this->view('/index','disponibilidade');
+      
+    }
     
 }

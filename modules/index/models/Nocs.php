@@ -91,6 +91,42 @@ class Nocs extends Dbo{
       
         
     }
+
+     public function backups_groups($id_empresa, $id_group, $nome_grupo){
+        
+      $query = "INSERT INTO appliance_groups SET ID_EMPRESA =:ID_EMPRESA, ID_GROUP =:ID_GROUP, NOME =:NOME";
+      
+      $stm = $this->db->prepare($query);
+      
+      $stm->bindValue(":ID_EMPRESA", $id_empresa);
+      
+      $stm->bindValue(":ID_GROUP", $id_group);
+
+      $stm->bindValue(":NOME", $nome_grupo);
+      
+      $stm->execute();
+      
+        
+    }
+
+     public function backups_tempates($id_empresa, $id_group, $id_template, $nome_template){
+        
+      $query = "INSERT INTO appliance_templates SET ID_EMPRESA =:ID_EMPRESA, ID_GROUP =:ID_GROUP, ID_TEMPLATE =:ID_TEMPLATE, NOME =:NOME";
+      
+      $stm = $this->db->prepare($query);
+      
+      $stm->bindValue(":ID_EMPRESA", $id_empresa);
+      
+      $stm->bindValue(":ID_GROUP", $id_group);
+
+      $stm->bindValue(":ID_TEMPLATE", $id_template);
+
+      $stm->bindValue(":NOME", $nome_template);
+      
+      $stm->execute();
+      
+        
+    }
     
     public function getBackup(){
         
