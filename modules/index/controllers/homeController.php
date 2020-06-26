@@ -54,7 +54,23 @@ class Home extends Controller{
 
 
         //@method override: chama o método view 
-        $this->view("/index",'regra_de_negocios', $data);
+        $this->view("/index",'desassociacao_host', $data);
+
+
+          $lista = array(
+                
+            "params" => array('output' => 'hostid', 'host','name'),
+
+            'selectTriggers' => array('triggerid','description'),
+
+        ); 
+
+         $hostid_associado =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.get", $lista);
+
+
+         echo "<pre>";
+            print_r($hostid_associado->result);
+         echo "</pre>";
 
     }
 
@@ -830,16 +846,39 @@ class Home extends Controller{
         
          $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
 
+
+        $lista_templates_associados = array(
+
+          "filter" => array('hostid' =>  $_POST['pegaHost']),
+         
+          "selectParentTemplates" => array('templateid')
+        
+        );
+
+
+      $id_templates_associado =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.get", $lista_templates_associados);
+
+          
+      foreach($id_templates_associado->result as $i => $item): 
+
+          foreach($item->parentTemplates as $templates_host_associados):
+
+              $seleciona_templates_associados[] = $templates_host_associados->templateid;
+
+          endforeach;
+
+      endforeach;  
+
+
        $substitui = array(
                           
-                          "hostid" => '10303',
+                          "hostid" => $_POST['pegaHost'],
 
-                          "templates" => array('10261'),
+                          "templates" => $_POST['itTemplate'],
 
-                          "templates_link" => array('10097')
+                          "templates_link" => $seleciona_templates_associados
                         
                         );
-
 
         $atualiza =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.update", $substitui);
 
