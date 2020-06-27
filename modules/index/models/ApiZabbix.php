@@ -361,6 +361,8 @@ class ApiZabbix extends Dbo{
                    "selectHosts" => "extend",
 
                    "select_alerts" => "extend",
+                   
+                   "selectRelatedObject" => "extend",
 
                    "select_acknowledges" => array('eventid', 'clock'),
 

@@ -68,10 +68,6 @@ class Home extends Controller{
          $hostid_associado =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.get", $lista);
 
 
-         echo "<pre>";
-            print_r($hostid_associado->result);
-         echo "</pre>";
-
     }
 
 
@@ -174,6 +170,8 @@ class Home extends Controller{
 
         $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
 
+        $teste  = $this->model('/index','Nocs');
+
         /*Melhoria na data de busca de incidentes do zabbix*/
          
         //@Monta a data para buscar os incidentes no zabbix
@@ -189,142 +187,34 @@ class Home extends Controller{
         $data_busca_incidente = $add_data->getTimestamp();
 
 
-       // echo $data_busca_incidente;
-
-        
+    
         /*Fim da melhorias*/
         
         $aberto = @$ApiZabbix->buscaEventoAbertoApiZabbix($urlApi, $login->result, $login->id, "event.get");
 
+        // echo "<pre>";
+        //   print_r($aberto->result);
+        // echo "</pre>";
 
          foreach($aberto->result as $i => $eventos):
 
-            echo "Incidentes Aberto: ". $eventos->eventid .'<br>';
-            echo "Incidentes Fechado: ". $eventos->r_eventid .'<br>';
+          if(@$eventos->hosts[0]->hostid == '10308'):
 
-        if($eventos->r_eventid != 0):  
+            $data_abertura = date('Y-m-d H:i:s', $eventos->clock);
 
-           $fechado = @$ApiZabbix->buscaEventoFechadoApiZabbix($urlApi, $login->result, $login->id, "event.get",$data_busca_incidente);
+            echo "Incidentes Aberto: ". $eventos->eventid .' '. 'Descrição: '. $eventos->name .'Data de Abertura: '.date('Y-m-d H:i:s', $eventos->clock).' Id da Trigger: '.$eventos->relatedObject->triggerid.'<br>';
 
-          //echo "Incidentes Aberto: ". $eventos->r_eventid .'<br>';
-
-           foreach($fechado->result as $fecha):
-
-              if($eventos->r_eventid === $fecha->eventid):
-
-                echo "Incidentes Encerrados: ". $eventos->eventid .'<br>';
-
-                echo "Id do Incidente: ". $fecha->eventid .'<br>';
-
-
-
-              endif;  
-
-           endforeach; 
-
-        endif; 
+            $teste->insertIncidentesApi(@$eventos->hosts[0]->hostid, $eventos->eventid,$eventos->name,$data_abertura);
+           
+          endif;
 
         endforeach;  
 
         //@Fim das Regras no template
     }
 
-    public function refreshDadosHistorico(){
-
-        $ApiZabbix = $this->model('/index','ApiZabbix');
-
-        $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
-
-        $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
-
-        
-        //@Aqui entra os eventod cadastrado no banco
-        $ivento_id = '16';
-
-        $incidente_aberto = array("output" => array('eventid','r_eventid'),
-          
-          "filter" => array('value' => 1, "eventid" =>  $ivento_id)
-
-        );
-       
-        
-        $aberto = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "event.get",$incidente_aberto);
-
-        foreach($aberto->result as $indice => $eventos){
-
-
-          if($ivento_id == $eventos->eventid):
-
-            $incidente_fechado = array(
-
-                'output' => array('eventid', 'clock','value','name'),
-
-                "filter" => array('value' => 0, "eventid" => $eventos->r_eventid)
-              );
-
-
-            $fechado = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "event.get",$incidente_fechado);
-
-            // echo "<pre>";
-            //   print_r($fechado->result);
-            // echo "</pre>";
-            
-            for($i =0; $i <= $indice; $i++):
-
-              $data_encerramento = date("Y-m-d H:i:s ", @$fechado->result[$i]->clock);
-
-              echo $data_encerramento;  
-            
-            endfor;
-        
-
-          endif;  
-
-        }  
-       
-    }
-
-
-
-    public function addBlobAzure(){
-       $ApiZabbix = $this->model('/index','ApiZabbix');
-
-        $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
-
-        $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
-
-
-            //@Lista host para serem customizados de acordo com a necessidade da empresa
-        $exibeTrigers = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "hostgroup.get");
-
-
-
-       //@Regras aplicada ao template, onde a extração dos dados do mesmo será necessario para a entregas dos dados entre o zabbix e o sistema 
-       $regras_template = array(
-
-            "params" => array("templateid"),
-
-            "selectTriggers" => array('triggerid')
-       ); 
-
-       $lista_regras_templates =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "template.get", $regras_template);
-
-     //fim da aplicação da regra do template  
-
-        $data['regras_lista_hosts'] = $exibeTrigers;
-
-        $data['regras_lista_template'] = $lista_regras_templates;
-
-
-        //@method override: chama o método view 
-        $this->view("/index",'cadastro_host', $data);
-
-
-       
-
-    }
-
-    public function interacao(){
+    
+  public function interacao(){
 
 
         $ApiZabbix = $this->model('/index','ApiZabbix');
@@ -838,7 +728,104 @@ class Home extends Controller{
    }
 
 
-    public function czpe(){
+  public function disponibilidade(){
+        header('Refresh:60');
+        $this->modelCustom('/index','Ping');
+
+       $this->view('/index','disponibilidade');
+      
+    }
+
+
+
+
+  /*
+  *DATA: 27-06-2020
+  *
+  *AS FUNCIONALIDADES ABAIXO TEM COMO OBJETIVO A CORRECAO E MELHORIAS NO MOMENTOS DA ATUALIZACAO E ADICAO DE HOSTS NOS APPLIANCES
+ */
+  public function encerraIncidentes(){
+
+        $ApiZabbix = $this->model('/index','ApiZabbix');
+
+         $teste  = $this->model('/index','Nocs');
+
+        $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
+
+        $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
+
+        
+        $exibe_incidentes = $teste->mostra_incidentes_aberto();
+        //@Aqui entra os eventod cadastrado no banco
+       
+       foreach($exibe_incidentes as $i => $detalha):
+
+           $incidente_aberto = array("output" => array('eventid','r_eventid'),
+            
+             "filter" => array('value' => 1, "eventid" =>  $detalha['ID_INCIDENTE']),
+
+             "selectRelatedObject" => "extend"
+
+          );
+         
+          
+           $aberto = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "event.get",$incidente_aberto);
+
+
+          foreach($aberto->result as $e_a => $detalhamento):
+
+              if($detalhamento->eventid == $detalha['ID_INCIDENTE'] && @$detalhamento->relatedObject->triggerid):
+                  
+                echo  "Podem ser fechado: ". $detalhamento->eventid .'<br>';
+
+                $incidente_fechado = array(
+
+                  'output' => array('eventid', 'clock','value','name'),
+
+                  "filter" => array('value' => 0, "eventid" => $detalhamento->r_eventid)
+                );
+
+
+                $fechado = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "event.get",$incidente_fechado);
+
+                  
+                for($e_f = 0; $e_f <= $e_a; $e_f++):
+
+                  if(@$fechado->result[$e_f]->eventid == $detalhamento->r_eventid):
+
+                    $status = "RESOLVIDO";
+
+                    $data_encerramento = date("Y-m-d H:i:s ", @$fechado->result[$i]->clock);
+
+                    $teste->update_incidentes($detalhamento->eventid,$status, $data_encerramento);
+
+                  endif;
+
+                endfor;           
+
+               else:
+
+                $status = "CANCELADO";
+
+                $data = date("Y-m-d H:i:s");
+
+                $teste->update_incidentes($detalhamento->eventid,$status,$data);
+
+              endif;  
+
+          endforeach;  
+        
+      endforeach;   
+  
+       
+    }
+
+ /*
+  *DATA: 27-06-2020
+  *
+  *AS FUNCIONALIDADES ABAIXO TEM COMO OBJETIVO A CORRECAO E MELHORIAS NO MOMENTOS DA ATUALIZACAO E ADICAO DE HOSTS NOS APPLIANCES
+ */
+  public function AtualizaEquipamentos(){
 
        $ApiZabbix = $this->model('/index','ApiZabbix');
 
@@ -868,15 +855,18 @@ class Home extends Controller{
           endforeach;
 
       endforeach;  
-
-
-       $substitui = array(
+ 
+      $substitui = array(
                           
                           "hostid" => $_POST['pegaHost'],
 
                           "templates" => $_POST['itTemplate'],
 
-                          "templates_link" => $seleciona_templates_associados
+                          "name" => $_POST['equipamento'],
+
+                          "host" => $_POST['equipamento'],
+                          
+                          //"templates_clear" => $seleciona_templates_associados
                         
                         );
 
@@ -889,12 +879,64 @@ class Home extends Controller{
     
     }
 
-    public function disponibilidade(){
-        header('Refresh:60');
-        $this->modelCustom('/index','Ping');
+  /*
+  *DEIXA OS DADOS PRE SELECIONADO PARA AS POSSIVEIS ALTERAÇOES
+  * DE EQUIPAMENTOS
+  */
+  public function edicaoEquipamentos(){
 
-       $this->view('/index','disponibilidade');
+        $ApiZabbix = $this->model('/index','ApiZabbix');
+
+        $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
+
+        $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
+
+        //@FAZ O FILTRO DO HOST A SER RDITADO
+        $lista_templates_associados = array(
+
+          "filter" => array('hostid' =>  '10308'),
+         
+          "selectParentTemplates" => array('templateid')
+        
+        );
+
+
+      //@REQUISITA OS DADOS AO APPLIANCES  
+      $id_templates_associado =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.get", $lista_templates_associados);
+
       
+      //@FAZ A EXTRAÇÃO DOS DADOS COLETADO    
+      foreach($id_templates_associado->result as $i => $item): 
+
+          foreach($item->parentTemplates as $templates_host_associados):
+
+              $seleciona_templates_associados[] = $templates_host_associados->templateid;
+
+          endforeach;
+
+      endforeach;  
+      
+
+
+      //@LISTA OS TEMPLATES NA CAIXA DE SELECAO
+      $regras_template = array(
+
+            "params" => array("templateid"),
+       ); 
+
+      //@REQUISITA OS DADOS AO APPLIANCES
+      $lista_regras_templates =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "template.get", $regras_template);
+      
+
+      //@PASSA OS DADOS A VIEWS
+      $data['regras_lista_template'] = $lista_regras_templates;
+
+      //@PASSA OS DADOS A VIEWS
+      $data['compara_selecao'] = $seleciona_templates_associados;
+
+
+      $this->view("/index", 'verifica', $data);
+
     }
     
 }

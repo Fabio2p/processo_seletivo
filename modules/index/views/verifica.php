@@ -25,30 +25,27 @@
 			<div class="form-group">
 				<select class="form-control itTemplate" name="itTemplate[]" id="itTemplate"  multiple="multiple">
 					
+
 					<?php foreach($regras_lista_template->result as $h => $dadosTemplate):?>
 
-						<option value="<?php echo $dadosTemplate->templateid; ?>"><?php echo $dadosTemplate->name; ?></option>
+							<?php if(@$compara_selecao[$h]):?>
+
+								<option selected="selected" value="<?php echo $dadosTemplate->templateid; ?> ">
+									<?php echo $dadosTemplate->name; ?>		
+								</option>
+
+							<?php else: ?>
+
+								<option value="<?php echo $dadosTemplate->templateid; ?> ">
+									<?php echo $dadosTemplate->name; ?>		
+								</option>
+
+							<?php endif; ?>
 
 					<?php endforeach;?>	
 				</select>
 			</div>
 			<!--Fim das regras aplicada -->
-
-			<div class="form-group">
-				<select class="form-control" name="pegaHost" id="pegaHost" multiple="true">
-					<option value="0">Selecione um Equipamento</option>
-					<?php foreach($regras_lista_hosts->result as $h => $host):?>
-
-						<option value="<?php echo $host->hostid; ?>"><?php echo $host->name; ?></option>
-
-					<?php endforeach;?>	
-				</select>
-			</div>
-
-			<div class="form-group">
-				<label>NOME DO EQUIPAMENTO</label>
-				<input type="text" name="equipamento">
-			</div>
 
 		</div>
 		</div>
@@ -59,6 +56,7 @@
 		$(document).ready(function() {
 		    $('.itTemplate').select2({placeholder: 'Selecione um Equipamento'});
 		});
+
 	</script>	
   </body>
 </html>
