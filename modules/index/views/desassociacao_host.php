@@ -46,8 +46,34 @@
 			</div>
 
 			<div class="form-group">
+				<select class="form-control" name="grupos_host[]" id="grupos_host" multiple="true">
+					<option value="0">Selecione um Grupo</option>
+					<?php foreach($grupos->result as $grupo):?>
+
+						<option value="<?php echo $grupo->groupid; ?>"><?php echo $grupo->name; ?></option>
+
+					<?php endforeach;?>	
+				</select>
+			</div>
+
+			<div class="form-group">
 				<label>NOME DO EQUIPAMENTO</label>
 				<input type="text" name="equipamento">
+			</div>
+
+			<div class="form-group">
+				<label>Ip</label>
+				<input type="text" name="ip">
+			</div>
+
+			<div class="form-group">
+				<label>Porta</label>
+				<input type="text" name="porta">
+			</div>
+
+			<div class="form-group">
+				<label>Dns</label>
+				<input type="text" name="dns">
 			</div>
 
 		</div>
@@ -57,7 +83,7 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-		    $('.itTemplate').select2({placeholder: 'Selecione um Equipamento'});
+		    $('.itTemplate').select2({placeholder: 'Selecione um Template'});
 		});
 	</script>	
   </body>

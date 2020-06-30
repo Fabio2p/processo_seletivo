@@ -32,7 +32,7 @@ class Home extends Controller{
         );
 
             //@Lista host para serem customizados de acordo com a necessidade da empresa
-        $exibeTrigers = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.get", $listaTriggers);
+        $exibeHosts = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.get", $listaTriggers);
 
 
 
@@ -46,11 +46,19 @@ class Home extends Controller{
 
        $lista_regras_templates =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "template.get", $regras_template);
 
+
+       $grupos = array('params' => array('extend'));
+
+
+       $listaGrupos = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "hostgroup.get", $grupos);
+
      //fim da aplicação da regra do template  
 
-        $data['regras_lista_hosts'] = $exibeTrigers;
+        $data['regras_lista_hosts'] = $exibeHosts;
 
         $data['regras_lista_template'] = $lista_regras_templates;
+
+        $data['grupos'] = $listaGrupos;
 
 
         //@method override: chama o método view 
@@ -834,28 +842,7 @@ class Home extends Controller{
          $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
 
 
-        $lista_templates_associados = array(
-
-          "filter" => array('hostid' =>  $_POST['pegaHost']),
-         
-          "selectParentTemplates" => array('templateid')
-        
-        );
-
-
-      $id_templates_associado =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.get", $lista_templates_associados);
-
-          
-      foreach($id_templates_associado->result as $i => $item): 
-
-          foreach($item->parentTemplates as $templates_host_associados):
-
-              $seleciona_templates_associados[] = $templates_host_associados->templateid;
-
-          endforeach;
-
-      endforeach;  
- 
+      //ALTERA OS DADOS DOS HOSTS
       $substitui = array(
                           
                           "hostid" => $_POST['pegaHost'],
@@ -865,17 +852,54 @@ class Home extends Controller{
                           "name" => $_POST['equipamento'],
 
                           "host" => $_POST['equipamento'],
+
+                          "groups"=> $_POST['grupos_host']
                           
-                          //"templates_clear" => $seleciona_templates_associados
-                        
                         );
 
-        $atualiza =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.update", $substitui);
+      $atualiza =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.update", $substitui);
 
-       echo "<pre>";
-          print_r($atualiza);
-       echo "</pre>";
+     
+
+     //LISTA A INTERFACE DO HOST 
+     $lista_interfaces = array(
+
+        'filter' => array('hostid' => $_POST['pegaHost']),
+
+        'selectInterfaces' => array('interfaceid')
+     );
         
+
+      $listar_interfaces =  @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "host.get", $lista_interfaces);  
+      
+
+     //EXTRAI O ID DA INTERFACE DO HOST 
+     foreach($listar_interfaces->result as $t => $item):
+
+        $atualiza_interface = $item->interfaces[0]->interfaceid;
+
+      endforeach;  
+
+      
+      //ALTERA OS DADOS DA INTERFACE DO HOST
+      $up_interface = array(
+
+        "interfaceid" => $atualiza_interface,
+
+        "ip" => $_POST['ip'],
+
+        "port" => $_POST['porta'],
+
+        "dns" => $_POST['dns'] 
+      
+      );
+
+    $t = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "hostinterface.update", $up_interface);  
+
+
+     echo "<pre>";
+      print_r($t);
+     echo "</pre>";
     
     }
 
