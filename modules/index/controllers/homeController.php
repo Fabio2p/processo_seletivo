@@ -15,7 +15,30 @@ use MicrosoftAzure\Storage\Blob\BlobRestProxy;
  */
 class Home extends Controller{
 
-    public function index(){
+  public function index(){
+
+
+   $this->view("/index",'formulario');
+   
+  }
+
+  public function blobAzureImages(){
+
+    $azure = $this->model('/index','ApiImagesBlobAzure');
+
+    
+
+    //Lista imagens de um determinado container
+    $azure->listImagesBlobAzure('homologacao');
+
+
+    //Faz upload de umagens para um container 
+    //$azure->apiUploadImagesBlobAzure("homologacao", $_FILES["anexos"]["name"]);
+
+}
+
+
+  public function index_old(){
 
         $ApiZabbix = $this->model('/index','ApiZabbix');
 
@@ -62,7 +85,7 @@ class Home extends Controller{
 
 
         //@method override: chama o método view 
-        $this->view("/index",'desassociacao_host', $data);
+        $this->view("/index",'regra_de_negocios', $data);
 
 
           $lista = array(
@@ -195,30 +218,146 @@ class Home extends Controller{
         $data_busca_incidente = $add_data->getTimestamp();
 
 
+
     
         /*Fim da melhorias*/
         
         $aberto = @$ApiZabbix->buscaEventoAbertoApiZabbix($urlApi, $login->result, $login->id, "event.get");
 
-        // echo "<pre>";
-        //   print_r($aberto->result);
-        // echo "</pre>";
+         //echo "<pre>";
+         //  print_r($aberto->result);
+         //echo "</pre>";
 
-         foreach($aberto->result as $i => $eventos):
+         //$exibe_host = $teste->mostra_host();
+        //@Aqui entra os eventod cadastrado no banco
 
-          if(@$eventos->hosts[0]->hostid == '10308'):
+         $mostra_empresa = $teste->mostra_empresa();
 
-            $data_abertura = date('Y-m-d H:i:s', $eventos->clock);
+         //$regras_de_notificao = $teste->regras_notifica();
+       
+       foreach($mostra_empresa as $h => $detalha):
+       
+        if($detalha['NOC'] == 1):
 
-            echo "Incidentes Aberto: ". $eventos->eventid .' '. 'Descrição: '. $eventos->name .'Data de Abertura: '.date('Y-m-d H:i:s', $eventos->clock).' Id da Trigger: '.$eventos->relatedObject->triggerid.'<br>';
+           foreach($aberto->result as $i => $eventos):
 
-            $teste->insertIncidentesApi(@$eventos->hosts[0]->hostid, $eventos->eventid,$eventos->name,$data_abertura);
-           
-          endif;
+            if(@$eventos->hosts[0]->hostid ==  @$detalha['HOSTID']):
 
-        endforeach;  
+              $data_abertura = date('Y-m-d H:i:s', $eventos->clock);
+
+              echo "Incidentes Aberto: ". $eventos->eventid .' '. 'Descrição: '. $eventos->name .'Data de Abertura: '.date('Y-m-d H:i:s', $eventos->clock).' Id da Trigger: '.@$eventos->relatedObject->triggerid.'<br>';
+
+                $teste->insertIncidentesApi(@$eventos->hosts[0]->hostid, $eventos->eventid,$eventos->name,$data_abertura,@$detalha['ID_EMPRESA'], @$eventos->relatedObject->templateid);
+             
+            endif;
+
+          endforeach;  
+
+        elseif($detalha['NOTIFICA_CLIENTE'] == 1):
+
+        
+           foreach($aberto->result as $i => $evento):
+
+            if(@$evento->hosts[0]->hostid ==  @$detalha['HOSTID']):
+                
+                $data_abertura = date('Y-m-d H:i:s', $evento->clock);
+
+                $teste->insertIncidentesApi(@$evento->hosts[0]->hostid, $evento->eventid,$evento->name,$data_abertura,@$detalha['ID_EMPRESA'], @$evento->relatedObject->templateid);
+
+            endif;
+
+          endforeach;  
+
+      
+
+        endif;  
+
+      endforeach;  
+
+      $this->encerraIncidentes($urlApi, $login->result, $login->id);
 
         //@Fim das Regras no template
+    }
+
+      /*
+  *DATA: 27-06-2020
+  *
+  *AS FUNCIONALIDADES ABAIXO TEM COMO OBJETIVO A CORRECAO E MELHORIAS NO MOMENTOS DA ATUALIZACAO E ADICAO DE HOSTS NOS APPLIANCES
+ */
+  public function encerraIncidentes($urlApi, $user, $pass){
+
+        $ApiZabbix = $this->model('/index','ApiZabbix');
+
+         $teste  = $this->model('/index','Nocs');
+
+        //$urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
+
+        //$login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
+
+        
+        $exibe_incidentes = $teste->mostra_incidentes_aberto();
+        //@Aqui entra os eventod cadastrado no banco
+       
+       foreach($exibe_incidentes as $i => $detalha):
+
+           $incidente_aberto = array("output" => array('eventid','r_eventid'),
+            
+             "filter" => array('value' => 1, "eventid" =>  $detalha['ID_INCIDENTE']),
+
+             "selectRelatedObject" => "extend"
+
+          );
+         
+          
+           $aberto = @$ApiZabbix->responseApiZabbixExecute($urlApi, $user, $pass, "event.get",$incidente_aberto);
+
+
+          foreach($aberto->result as $e_a => $detalhamento):
+
+              if($detalhamento->eventid == $detalha['ID_INCIDENTE'] && @$detalhamento->relatedObject->triggerid):
+                  
+                echo  "Podem ser fechado: ". $detalhamento->eventid .'<br>';
+
+                $incidente_fechado = array(
+
+                  'output' => array('eventid', 'clock','value','name'),
+
+                  "filter" => array('value' => 0, "eventid" => $detalhamento->r_eventid)
+                );
+
+
+                $fechado = @$ApiZabbix->responseApiZabbixExecute($urlApi, $user, $pass, "event.get",$incidente_fechado);
+
+                  
+                for($e_f = 0; $e_f <= $e_a; $e_f++):
+
+                  if(@$fechado->result[$e_f]->eventid == $detalhamento->r_eventid):
+
+                    $status = "RESOLVIDO";
+
+                    $data_encerramento = date("Y-m-d H:i:s ", @$fechado->result[$i]->clock);
+
+                    $teste->update_incidentes($detalhamento->eventid,$status, $data_encerramento);
+
+                  endif;
+
+                endfor;           
+
+               else:
+
+                $status = "CANCELADO";
+
+                $data = date("Y-m-d H:i:s");
+
+                $teste->update_incidentes($detalhamento->eventid,$status,$data);
+
+              endif;  
+
+          endforeach;  
+        
+      endforeach;   
+  
+       
     }
 
     
@@ -744,90 +883,6 @@ class Home extends Controller{
       
     }
 
-
-
-
-  /*
-  *DATA: 27-06-2020
-  *
-  *AS FUNCIONALIDADES ABAIXO TEM COMO OBJETIVO A CORRECAO E MELHORIAS NO MOMENTOS DA ATUALIZACAO E ADICAO DE HOSTS NOS APPLIANCES
- */
-  public function encerraIncidentes(){
-
-        $ApiZabbix = $this->model('/index','ApiZabbix');
-
-         $teste  = $this->model('/index','Nocs');
-
-        $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
-
-        $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
-
-        
-        $exibe_incidentes = $teste->mostra_incidentes_aberto();
-        //@Aqui entra os eventod cadastrado no banco
-       
-       foreach($exibe_incidentes as $i => $detalha):
-
-           $incidente_aberto = array("output" => array('eventid','r_eventid'),
-            
-             "filter" => array('value' => 1, "eventid" =>  $detalha['ID_INCIDENTE']),
-
-             "selectRelatedObject" => "extend"
-
-          );
-         
-          
-           $aberto = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "event.get",$incidente_aberto);
-
-
-          foreach($aberto->result as $e_a => $detalhamento):
-
-              if($detalhamento->eventid == $detalha['ID_INCIDENTE'] && @$detalhamento->relatedObject->triggerid):
-                  
-                echo  "Podem ser fechado: ". $detalhamento->eventid .'<br>';
-
-                $incidente_fechado = array(
-
-                  'output' => array('eventid', 'clock','value','name'),
-
-                  "filter" => array('value' => 0, "eventid" => $detalhamento->r_eventid)
-                );
-
-
-                $fechado = @$ApiZabbix->responseApiZabbixExecute($urlApi, $login->result, $login->id, "event.get",$incidente_fechado);
-
-                  
-                for($e_f = 0; $e_f <= $e_a; $e_f++):
-
-                  if(@$fechado->result[$e_f]->eventid == $detalhamento->r_eventid):
-
-                    $status = "RESOLVIDO";
-
-                    $data_encerramento = date("Y-m-d H:i:s ", @$fechado->result[$i]->clock);
-
-                    $teste->update_incidentes($detalhamento->eventid,$status, $data_encerramento);
-
-                  endif;
-
-                endfor;           
-
-               else:
-
-                $status = "CANCELADO";
-
-                $data = date("Y-m-d H:i:s");
-
-                $teste->update_incidentes($detalhamento->eventid,$status,$data);
-
-              endif;  
-
-          endforeach;  
-        
-      endforeach;   
-  
-       
-    }
-
  /*
   *DATA: 27-06-2020
   *
@@ -962,5 +1017,62 @@ class Home extends Controller{
       $this->view("/index", 'verifica', $data);
 
     }
+
+    public function ApiAzureBlob(){
+
+        $target_url = "http://host.local.dev-sys/index/home/teste";    
+
+
+        $post = array('file' =>'@' . $_FILES['anexos']['tmp_name']. ';filename=' . $_FILES['anexos']['name']
+    );
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $target_url);
+
+        curl_setopt($ch, CURLOPT_POST, 1);
+        
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+        
+        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible;)");   
+        
+        curl_setopt($ch, CURLOPT_HTTPHEADER,array('Content-Type: multipart/form-data'));
+        //curl_setopt($ch, CURLOPT_FRESH_CONNECT, 1);   
+        //curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);  
+        //curl_setopt($ch, CURLOPT_TIMEOUT, 100);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+
+        $result = curl_exec ($ch);
+
+        if ($result === FALSE) {
+
+            echo "Error sending" . $result .  " " . curl_error($ch);
+
+            curl_close ($ch);
+
+        }else{
+
+            curl_close ($ch);
+
+            echo  "Result: " . $result;
+
+        }   
+
+
+        }
+
+        public function teste(){
+
+          $sub_dir = '/var/www/html/projetos-dev/';
+
+          $dir_to_save = getcwd();
+
+          $name = uniqid().'-comprovante.png';
+
+       
+          file_put_contents($dir_to_save.$sub_dir.$_POST['file']);
+        }
     
 }

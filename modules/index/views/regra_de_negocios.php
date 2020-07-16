@@ -4,7 +4,7 @@
 <!doctype html>
 <html lang="pt-Br">
   <head>
-<script src="http://host.local.dev-sys/assets/js/jquery.js"></script>
+<script src="https://host.local.dev-sys/assets/js/jquery.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
@@ -108,7 +108,7 @@
 
 			let idHost = jQuery(this).val();
 
-			jQuery.get("http://host.local.dev-sys/index/home/getRegrasTriggers/"+idHost, function(h){
+			jQuery.get("https://host.local.dev-sys/index/home/getRegrasTriggers/"+idHost, function(h){
 
 			var objHost = jQuery.parseJSON(h);
                 
@@ -134,7 +134,7 @@
 
 			let idHost = jQuery(this).val();
 
-			jQuery.get("http://host.local.dev-sys/index/home/getRegrasTriggers/"+idHost, function(h){
+			jQuery.get("https://host.local.dev-sys/index/home/getRegrasTriggers/"+idHost, function(h){
 
 			var objHost = jQuery.parseJSON(h);
                 
@@ -203,7 +203,7 @@
 			  
 			  type: "POST",
 			  
-			  url: "http://host.local.dev-sys/index/home/salvar",
+			  url: "https://host.local.dev-sys/index/home/salvar",
 
 			  data: {rnTemplate:rnTemplate,equipamento:equipamento,severidade:severidade,rnCliente:rnCliente,rnEmpresa:rnEmpresa,tempoNotificaCliente:tempoNotificaCliente,tempoNotificaEmpresa:tempoNotificaEmpresa,renotificacao:renotificacao, 'checkeds':checkeds},
 			  
