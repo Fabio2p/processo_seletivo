@@ -25,7 +25,7 @@ class  ApiImagesBlobAzure{
 	{
 		
 
-    	$upload = @fopen($arquivo, "r");
+    	$upload = fopen($arquivo, "r");
 
 
 	    $this->objConect->createBlockBlob($nomeDiretorio, $arquivo, $upload);

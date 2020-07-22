@@ -1,7 +1,4 @@
 <?php
-use MicrosoftAzure\Storage\Blob\Models\PublicAccessType;
-
-use MicrosoftAzure\Storage\Blob\BlobRestProxy;
 
 /**
  * Author: Fábio Silveira dos Anjos
@@ -26,14 +23,19 @@ class Home extends Controller{
 
     $azure = $this->model('/index','ApiImagesBlobAzure');
 
+      //$t = basename($_FILES['anexos']['name']);
+
     
-
+      $images =   $_FILES["anexos"]["tmp_name"];
+  
+      
+      echo $images;
     //Lista imagens de um determinado container
-    $azure->listImagesBlobAzure('homologacao');
+    //$azure->listImagesBlobAzure('homologacao');
 
-
+  
     //Faz upload de umagens para um container 
-    //$azure->apiUploadImagesBlobAzure("homologacao", $_FILES["anexos"]["name"]);
+    //$azure->apiUploadImagesBlobAzure("homologacao", $images);
 
 }
 
