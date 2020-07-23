@@ -59,9 +59,10 @@
 	<input type="checkbox" name="teste2">
 	<input type="checkbox" name="teste2">
 
-	<select>
-		<option>01</option>
-		<option>02</option>
+	<select id="testess">
+		<option value="0">Selecione uma opção</option>
+		<option>Informatica</option>
+		<option>Eletro domestico</option>
 		<option>03</option>
 		<option>04</option>
 		<option>05</option>
@@ -92,9 +93,11 @@
 
 	function clearForm(){
 		
-		jQuery(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val('');
+		jQuery(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val();
     	
     	jQuery(':checkbox, :radio').prop('checked', false);
+
+    	jQuery('#testess').val("0");
 	}
 
 </script>
