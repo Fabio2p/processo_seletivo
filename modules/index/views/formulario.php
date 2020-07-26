@@ -79,28 +79,6 @@
 	<button type="button" id="limpar">Limpar</button>
 </form>
 
-<script type="text/javascript">
-	jQuery(function(){
-
-		jQuery("button#limpar").on('click', function(){
-
-			clearForm();
-
-		});
-
-	});
-
-
-	function clearForm(){
-		
-		jQuery(':input').not(':button, :submit, :reset, :hidden, :checkbox, :radio').val();
-    	
-    	jQuery(':checkbox, :radio').prop('checked', false);
-
-    	jQuery('#testess').val("0");
-	}
-
-</script>
 </body>
 </html>
 

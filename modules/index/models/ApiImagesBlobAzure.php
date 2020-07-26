@@ -21,27 +21,39 @@ class  ApiImagesBlobAzure{
 	}
 
 
-	function apiUploadImagesBlobAzure($nomeDiretorio, $arquivo)
+	function apiUploadImagesBlobAzure($nomeDiretorio, $image, $path)
 	{
 		
 
-    	$upload = fopen($arquivo, "r");
+    	$upload = fopen($path, "r");
 
 
-	    $this->objConect->createBlockBlob($nomeDiretorio, $arquivo, $upload);
+	    $this->objConect->createBlockBlob($nomeDiretorio, $image, $upload);
 	     
 	}
 
 	public function listImagesBlobAzure($nomeDiretorio){
 		
+		try {
 		
-		$listBlobsResult = $this->objConect->listBlobs($nomeDiretorio);
+			$listBlobsResult = $this->objConect->listBlobs($nomeDiretorio);
 
-	    foreach ($listBlobsResult->getBlobs() as $blob):
+		    foreach ($listBlobsResult->getBlobs() as $blob):
 
-	      echo "Listagem de Imagem: ".$blob->getName() .'<br>';
+		      	//echo "Listagem de Imagem: ".$blob->getName() .'<br> Url: '. $blob->getUrl()."<br />";
 
-	    endforeach;
+		    	echo "<img src=".$blob->getUrl()." width='400'>";
+		    	
+		    endforeach;
+
+		}catch(ServiceException $e){
+			  
+			  $code = $e->getCode();
+			  
+			  $error_message = $e->getMessage();
+			  
+			  echo $code.": ".$error_message."<br />";
+			}
 
 	}
 

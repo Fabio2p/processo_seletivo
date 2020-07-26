@@ -12,7 +12,7 @@
  */
 class Home extends Controller{
 
-  public function index_old(){
+  public function index(){
 
 
    $this->view("/index",'formulario');
@@ -22,25 +22,21 @@ class Home extends Controller{
   public function blobAzureImages(){
 
     $azure = $this->model('/index','ApiImagesBlobAzure');
-
-      //$t = basename($_FILES['anexos']['name']);
-
     
-      $images =   $_FILES["anexos"]["tmp_name"];
-  
-      
-      echo $images;
-    //Lista imagens de um determinado container
-    //$azure->listImagesBlobAzure('homologacao');
+    $nome =   $_FILES["anexos"]["name"];
 
+    $path =   $_FILES["anexos"]["tmp_name"];
   
+    //Lista imagens de um determinado container
+    $teste = $azure->listImagesBlobAzure('homologacao');
+
     //Faz upload de umagens para um container 
-    //$azure->apiUploadImagesBlobAzure("homologacao", $images);
+    //$azure->apiUploadImagesBlobAzure("homologacao/upload/sdredes/assinaturas",$nome, $path);
 
 }
 
 
-  public function index(){
+  public function index_old(){
 
         $ApiZabbix = $this->model('/index','ApiZabbix');
 
