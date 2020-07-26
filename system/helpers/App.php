@@ -59,5 +59,10 @@ class App{
 
     }
 
+     public static function getJs($modules, $js){
+
+        return realpath("./modules/{$modules}/helpers").'/'.$js.'.js';
+    }
+
 }
 ?>

@@ -14,6 +14,9 @@
   <body>
 
 <div class="container">   
+
+	<div id="retorno_msg"></div>
+
 	<form method="POST" id="regras" name="regras">
 	<div class="row mt-5">
 		<div class="col-sm-3">
@@ -203,7 +206,9 @@
 			  
 			  type: "POST",
 			  
-			  url: "https://host.local.dev-sys/index/home/salvar",
+			  //url: "https://host.local.dev-sys/index/home/salvar",
+
+			  url	  : 'http://host.local.dev-sys/index/addHost/salvaHost',
 
 			  data: {rnTemplate:rnTemplate,equipamento:equipamento,severidade:severidade,rnCliente:rnCliente,rnEmpresa:rnEmpresa,tempoNotificaCliente:tempoNotificaCliente,tempoNotificaEmpresa:tempoNotificaEmpresa,renotificacao:renotificacao, 'checkeds':checkeds},
 			  
@@ -211,7 +216,7 @@
 
 			    //console.log(data);
 
-			    jQuery("#regras").html(data);
+			    jQuery("#retorno_msg").html(data);
 			  }
 
 			}); //Fim ajax

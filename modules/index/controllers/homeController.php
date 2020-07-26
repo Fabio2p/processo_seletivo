@@ -12,7 +12,7 @@
  */
 class Home extends Controller{
 
-  public function index(){
+  public function index_old(){
 
 
    $this->view("/index",'formulario');
@@ -40,11 +40,11 @@ class Home extends Controller{
 }
 
 
-  public function index_old(){
+  public function index(){
 
         $ApiZabbix = $this->model('/index','ApiZabbix');
 
-        $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.3/zabbix/api_jsonrpc.php");
+        $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.2/zabbix/api_jsonrpc.php");
 
         $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
 

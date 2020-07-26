@@ -4,11 +4,11 @@
 
   	RewriteCond %{HTTPS} off
 
-	RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+	  #RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
   	RewriteCond %{SCRIPT_FILENAME} !-f
 
-	RewriteCond %{SCRIPT_FILENAME} !-d
+	  RewriteCond %{SCRIPT_FILENAME} !-d
 
     RewriteRule ^([a-z]+)/?$ index.php?module=$1 [NC]
 
@@ -24,9 +24,9 @@
 
     RewriteRule ^([a-z]+)/([a-z]+)/([a-z]+)/([a-zA-Z0-9]+)/?$ index.php?module=$1&option=$2&view=$3&tokenEmail=$4 [NC,L]
 
-     RewriteRule ^([a-z]+)/([a-z]+)/([a-z]+)/([0-9]+)/([0-9]+)/?$ index.php?module=$1&option=$2&view=$3&id=$4&catid=$5 [NC,L]
+    RewriteRule ^([a-z]+)/([a-z]+)/([a-z]+)/([0-9]+)/([0-9]+)/?$ index.php?module=$1&option=$2&view=$3&id=$4&catid=$5 [NC,L]
      RewriteRule ^([a-z]+)/([a-z]+)/([a-z]+)/([0-9]+)/([0-9]+)/([0-9]+)/?$ index.php?module=$1&option=$2&view=$3&id=$4&catid=$5&params=$6 [NC,L]
      
-     RewriteRule ^([a-z]+)/([a-z]+)/([a-z]+)/([0-9]+)/([a-zA-Z0-9]+)/?$ index.php?module=$1&option=$2&view=$3&id=$4&hashToken=$5 [NC,L]
+    RewriteRule ^([a-z]+)/([a-z]+)/([a-z]+)/([0-9]+)/([a-zA-Z0-9]+)/?$ index.php?module=$1&option=$2&view=$3&id=$4&hashToken=$5 [NC,L]
 
 </IfModule>

@@ -173,5 +173,16 @@ abstract class Controller{
 
         echo json_encode($json);
     }
+
+
+    /*
+    * @
+    * @METHOD: Converte mensagens para JSON */
+    public function convertJSON($json = array()){
+
+       header('Content-type: application/json');
+        
+       echo json_encode($json);
+    }
     
 }
