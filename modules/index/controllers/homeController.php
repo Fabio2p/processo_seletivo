@@ -23,15 +23,32 @@ class Home extends Controller{
 
     $azure = $this->model('/index','ApiImagesBlobAzure');
     
-    $nome =   $_FILES["anexos"]["name"];
+    //$nome =   $_FILES["anexos"]["name"];
 
-    $path =   $_FILES["anexos"]["tmp_name"];
-  
+    //$path =   $_FILES["anexos"]["tmp_name"];
+    
+
+    //$typeMime = $_FILES["anexos"]["type"];
+
+    //echo $typeMime;
+
+
+    $nomeImagem = $azure->getNameImage('anexos');
+
+
+    $pathImagem = $azure->getPathTmpImages('anexos');
+
+
+    $mimeImage  = $azure->mimeTypeImage('anexos');
+
+
+    echo "Nome: ". $nomeImagem .'<br>';
+
     //Lista imagens de um determinado container
     $teste = $azure->listImagesBlobAzure('homologacao');
 
     //Faz upload de umagens para um container 
-    //$azure->apiUploadImagesBlobAzure("homologacao/upload/sdredes/assinaturas",$nome, $path);
+    $azure->apiUploadImagesBlobAzure("homologacao/upload/sdredes/assinaturas",$nomeImagem, $pathImagem, $mimeImage);
 
 }
 
