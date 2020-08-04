@@ -64,5 +64,38 @@ class App{
         return realpath("./modules/{$modules}/helpers").'/'.$js.'.js';
     }
 
+
+    public static function reCAPTCHAGoogle($recaptha){
+
+            if(isset($_POST["{$recaptha}"])):
+
+                $recaptcha_url = 'https://www.google.com/recaptcha/api/siteverify';
+
+                $recaptcha_secret = '6LfzEboZAAAAAFPsE1QTr7iqfpGWRP5D5lzc9Oba';
+                
+                $recaptcha_response = $_POST['recaptcha_response'];
+
+                $recaptcha = file_get_contents($recaptcha_url . '?secret=' . $recaptcha_secret . '&response=' . $recaptcha_response);
+                
+                $recaptcha = json_decode($recaptcha);
+
+
+                if($recaptcha->success == true):
+
+                    return true;
+                    //echo $recaptcha_response;
+                    
+                else:
+
+                    header("Location: https://www.google.com.br");
+
+                endif;    
+                
+
+            endif;
+
+    }
+
 }
 ?>
+

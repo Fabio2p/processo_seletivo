@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title></title>
-	 <link rel="stylesheet" type="text/css" href="<?= BASE_URL ?>/css/style.css" />
+
 </head>
 <body>
 	
@@ -20,9 +20,12 @@
 
 				<label>Senha</label>
 				
-				<input type="password" name="password">
-                <input type="hidden" name="token" value="<?= $_SESSION['token']; ?>">
-				<input type="hidden" name="ipExterno" value="<?= $ipExterno; ?>">		
+				<input type="password" name="password" />
+
+                <input type="hidden" name="token">
+
+                 <input type="hidden" name="recaptcha_response" id="recaptchaResponse">
+				
 				<input type="submit" value="Acessar" class="btn-submit" />
 				
 				<?php if(isset($error)):?>
@@ -35,5 +38,18 @@
 
 	</div>
 	
+	<script src="https://www.google.com/recaptcha/api.js?render=6LfzEboZAAAAAFAncoyXd6JIkQB9lc2On-FNPLs9"></script>
+
+     <script>
+        grecaptcha.ready(function () {
+
+            grecaptcha.execute('6LfzEboZAAAAAFAncoyXd6JIkQB9lc2On-FNPLs9', { action: 'submit' }).then(function (token) {
+                
+                var recaptchaResponse = document.getElementById('recaptchaResponse');
+                
+                recaptchaResponse.value = token;
+            });
+        });
+    </script>
 </body>
 </html>

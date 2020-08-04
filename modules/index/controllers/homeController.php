@@ -14,8 +14,10 @@ class Home extends Controller{
 
   public function index(){
 
+   App::reCAPTCHAGoogle('recaptcha_response');
 
-   $this->view("/index",'formulario');
+
+   $this->view("/index",'login');
    
   }
 

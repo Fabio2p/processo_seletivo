@@ -88,47 +88,21 @@
 
 		jQuery("form#addHost").submit(function(){
 
-			let template 		= jQuery("#template").val();
-
-			let grupos 			= jQuery("#grupos").val();
-
-			let equipamento     = jQuery("#equipamento").val();
-
-			let nome    		= jQuery("#nome").val();
-
-			let dns     		= jQuery("#dns").val();
-			
-			let ip     			= jQuery("#ip").val();
-
-			let interface     			= jQuery("#interface").val();
 			
 			jQuery.ajax({
 
 				type: 'POST',
 
-				url	  : 'http://host.local.dev-sys/index/addHost/salvaHost',
+				url	  : 'http://host.local.dev-sys/upload/painel/upload.php',
+				//url	  : 'http://host.local.dev-sys/index/addHost/salvaHost',
 
-				data: {equipamento:equipamento, nome:nome, template:template, grupos:grupos,dns:dns, ip:ip,interface:interface},
+				
 
 				success: function(response){
 
-					if(response.error == false){
+						console.log(response);
 
-						location.reload();
 
-						limpaFromulario();
-						
-						console.log(response.mensagem);
-
-						jQuery("#retorno_msg").html(response.mensagem);
-
-					}else{
-						
-						console.log(response.mensagem);
-
-						jQuery("#retorno_msg").html(response.mensagem);
-					}		
-				
 				},
 
 				error: function (xhr, ajaxOptions, thrownError) {
