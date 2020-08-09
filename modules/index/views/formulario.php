@@ -1,86 +1,69 @@
-<!DOCTYPE html>
 <html>
 <head>
-	<script src="https://host.local.dev-sys/assets/js/jquery.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://blueimp.github.io/jQuery-File-Upload/js/vendor/jquery.ui.widget.js"></script>
 
+<script src="https://blueimp.github.io/jQuery-File-Upload/js/jquery.fileupload.js"></script>
 
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<style>
+.file {
+   position: relative;
+   background: linear-gradient(to right, lightblue 50%, transparent 50%);
+   background-size: 200% 100%;
+   background-position: right bottom;
+   transition:all 1s ease;
+}
+ .file.done {
+   background: lightgreen;
+}
+ .file a {
+   display: block;
+   position: relative;
+   padding: 5px;
+   color: black;
+}
 
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet" />
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
+</style>
 </head>
 <body>
-<form action="http://host.local.dev-sys/index/home/blobAzureImages" method="post" enctype="multipart/form-data">
-	<input type="file" name="anexos">
-
-	<input type="submit" name="anexo" value="Anexo">
-
-	<input type="radio" name="teste">
-	<input type="radio" name="teste">
-	<input type="radio" name="teste">
-	<input type="radio" name="teste">
-	<input type="radio" name="teste">
-	<input type="radio" name="teste">
-	<input type="radio" name="teste">
-	<input type="radio" name="teste">
-	<input type="radio" name="teste">
-	<input type="radio" name="teste">
-
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-	<input type="checkbox" name="teste2">
-
-	<select id="testess">
-		<option value="0">Selecione uma opção</option>
-		<option>Informatica</option>
-		<option>Eletro domestico</option>
-		<option>03</option>
-		<option>04</option>
-		<option>05</option>
-		<option>06</option>
-		<option>07</option>
-		<option>08</option>
-		<option>09</option>
-		<option>10</option>
-		<option>11</option>
-		<option>12</option>
-	</select>
 
 
-	<button type="button" id="limpar">Limpar</button>
+  <input id="fileupload" type="file" name="files[]" data-url="https://host.local.dev-sys/index/home/sendMessage" multiple> multiple>
+
+  
 </form>
+<script>
+
+$(document).ready(function(){
+
+  $("#fileupload").fileupload({
+
+  type: 'POST',
+
+  url: "https://host.local.dev-sys/index/home/blobAzureImages",
+
+  add: function(e, data) {
+    data.context = $('<p class="file">')
+      .append($('<a target="_blank">').text(data.files[0].name))
+      .appendTo(document.body);
+    data.submit();
+  },
+  progress: function(e, data) {
+    var progress = parseInt((data.loaded / data.total) * 100, 10);
+    data.context.css("background-position-x", 100 - progress + "%");
+  },
+  done: function(e, data) {
+    data.context
+      .addClass("done")
+      .find("a")
+      .prop("href", data.result.files[0].url);
+  }
+});
+});
+
+
+</script>
+
 
 </body>
 </html>
-
-
-

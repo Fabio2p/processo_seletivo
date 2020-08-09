@@ -4,8 +4,8 @@
 
     $DESENVOLVIMENTO = [
 
-       'HOST' => "172.17.0.3",
-       'BASE' => 'zabbix',
+       'HOST' => "172.17.0.2",
+       'BASE' => 'projetos_dev',
        'USER' => 'fabio',
        'PASS' => '5505',
 

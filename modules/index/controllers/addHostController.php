@@ -141,4 +141,11 @@ class addHost extends Controller
 
 
 	}
+
+	public function TESTEJSON(){
+
+		$host = $this->model('/index', 'Nocs');
+
+		echo json_encode($host->selecionaNoc_host());
+	}
 }

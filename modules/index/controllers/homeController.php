@@ -17,11 +17,19 @@ class Home extends Controller{
    App::reCAPTCHAGoogle('recaptcha_response');
 
 
-   $this->view("/index",'login');
+   $this->view("/index",'formulario');
    
   }
 
+  public function sendMessage(){
+    echo "Deus do impossível!";
+    var_dump($_FILES);
+
+  }
+
   public function blobAzureImages(){
+
+    header("Access-Control-Allow-Origin: *");
 
     $azure = $this->model('/index','ApiImagesBlobAzure');
     
@@ -35,7 +43,9 @@ class Home extends Controller{
     //echo $typeMime;
 
 
-    $nomeImagem = $azure->getNameImage('anexos');
+    var_dump($_FILES);
+
+   /* $nomeImagem = $azure->getNameImage('anexos');
 
 
     $pathImagem = $azure->getPathTmpImages('anexos');
@@ -50,7 +60,7 @@ class Home extends Controller{
     $teste = $azure->listImagesBlobAzure('homologacao');
 
     //Faz upload de umagens para um container 
-    $azure->apiUploadImagesBlobAzure("homologacao/upload/sdredes/assinaturas",$nomeImagem, $pathImagem, $mimeImage);
+    $azure->apiUploadImagesBlobAzure("homologacao/upload/sdredes/assinaturas",$nomeImagem, $pathImagem, $mimeImage);*/
 
 }
 

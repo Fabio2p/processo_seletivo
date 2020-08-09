@@ -1,0 +1,17 @@
+{
+    "sqltools.connections": [
+        {
+            "database": "projetos_dev",
+            "driver": "MySQL",
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "name": "Maysql",
+            "password": "5505",
+            "port": 3306,
+            "previewLimit": 50,
+            "server": "172.17.0.2",
+            "username": "fabio"
+        }
+    ]
+}

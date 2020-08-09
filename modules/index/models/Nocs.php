@@ -48,14 +48,29 @@ class Nocs extends Dbo{
     }
 
 
-    public function selecionaNoc_host($id_empresa){
+    public function selecionaNoc_host(){
 
 
-        $query = "SELECT * FROM hosts WHERE IDEMPRESA =:IDEMPRESA";
+        $query = "SELECT * FROM host";
+
 
         $stm = $this->db->prepare($query);
 
-        $stm->bindValue(":IDEMPRESA", $id_empresa);
+       
+        $stm->execute();
+
+        return $stm->fetchAll();
+    }
+
+       public function selecionaNoc_hosts($id = null){
+
+
+        $query = "SELECT * FROM host WHERE ID =:ID";
+
+
+        $stm = $this->db->prepare($query);
+
+        $stm->bindValue(":ID", $id);
 
         $stm->execute();
 
