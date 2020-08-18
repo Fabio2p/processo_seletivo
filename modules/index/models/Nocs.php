@@ -50,9 +50,10 @@ class Nocs extends Dbo{
 
     public function selecionaNoc_host(){
 
+      $query = "SELECT * FROM view_incidentes WHERE id_host =:ID";
+        //$query = "SELECT * FROM host";
 
-        $query = "SELECT * FROM host";
-
+        //$query = "CALL host()";
 
         $stm = $this->db->prepare($query);
 

@@ -35,8 +35,8 @@
 
             "columns": [
               
-                { "data": "NOME" },
-                { "data": "DESCRICAO" }
+                { "data": "status" },
+                { "data": "urgencia" }
             ],
             
             "order": [[0, 'desc']]
@@ -79,8 +79,8 @@
 
                 "columns": [
                 
-                    { "data": "NOME" },
-                    { "data": "DESCRICAO" }
+                    { "data": "status" },
+                    { "data": "urgencia" }
                 ],
                 
                 "order": [[0, 'desc']]

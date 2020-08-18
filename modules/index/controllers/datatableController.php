@@ -7,6 +7,12 @@ class dataTable extends Controller
         $this->view('/index','datatables');
     }
 
+    public function graficos(){
+
+        $this->view("/index",'graficos');
+
+    }
+
     public function dataTableJson(){
         
         $teste = @$_POST['t'] ? $_POST['t'] : "";
@@ -15,7 +21,7 @@ class dataTable extends Controller
 
         //$json = array("data" => $teste->selecionaNoc_host());
 
-        echo json_encode($teste->selecionaNoc_host($teste), true);
+        echo json_encode($teste->selecionaNoc_host(10166), true);
 
     }
 
