@@ -8,7 +8,7 @@
 
   	RewriteCond %{SCRIPT_FILENAME} !-f
 
-	  RewriteCond %{SCRIPT_FILENAME} !-d
+	RewriteCond %{SCRIPT_FILENAME} !-d
 
     RewriteRule ^([a-z]+)/?$ index.php?module=$1 [NC]
 

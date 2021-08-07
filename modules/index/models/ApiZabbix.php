@@ -50,36 +50,6 @@ class ApiZabbix extends Dbo{
 
     }
 
-    /*
-    *DATA: 03-04-2020
-    *EXIBE A VERSÃO DO ZABBIX
-    */
-    public function requestVersionApiZabbix($urlZabbix){
-
-       /*@VAR:
-         *
-         * Formato de dados em JSON Aceito pela a API Zabbix
-         *  */
-        $credenciais = ["jsonrpc" => "2.0","method"  => "apiinfo.version",
-                        "params"  => [],
-                        "id" => 1,
-                        "auth" => null
-                       ];
-
-        /*@VAR:
-         *
-         * Codifica os dados em formato JSON
-         *  */
-        $rsJson = json_encode($credenciais, true);
-
-        /*@CALL:
-         *
-         *Chama o metodo  requestApiZabbixCurl e retorna objetos
-         *  */
-        return $this->requestApiZabbixCurl($urlZabbix, $rsJson);
-
-    }
-
     /*@METHOD:
      *
      *Trata os dados api zabbix  ao enviar e ao receber.
@@ -503,28 +473,6 @@ class ApiZabbix extends Dbo{
      
     }
     
-    public function responseApiZabbixEndPoint($url){
-
-        $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_URL, $url);
-
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-
-        curl_setopt($ch, CURLOPT_FAILONERROR, TRUE);
-
-        $content = curl_exec($ch);
-
-        $info = curl_getinfo($ch);
-
-        return $info;
-
-    }
-
     /*@METHOD:
      *
      *Envia requisicao para a API Zabbix via CURL php */
@@ -540,9 +488,9 @@ class ApiZabbix extends Dbo{
 
             curl_setopt ($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
 
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
             
-            curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 1);
 
             curl_setopt($ch, CURLOPT_FRESH_CONNECT, TRUE);
 

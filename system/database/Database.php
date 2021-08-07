@@ -22,11 +22,11 @@ class Database{
             
             if(self::$conn == null):
                 
-                $chars = [PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8,lc_time_names = 'pt_BR'"];
+                //$chars = [PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8,lc_time_names = 'pt_BR'"];
 
                 $dsn = "mysql:host=".$host.";dbname=".$base;
 
-                self::$conn = new PDO($dsn, $user,$pass, $chars);
+                self::$conn = new PDO($dsn, $user,$pass);
 
                 self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 

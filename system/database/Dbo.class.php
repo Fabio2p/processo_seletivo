@@ -30,7 +30,7 @@ class Dbo extends Database{
      */    
     public function __construct(){
 
-        $this->db = parent::getConn();
+       // $this->db = parent::getConn();
 
     }
     /**
