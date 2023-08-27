@@ -1,0 +1,25 @@
+version: '3.9'
+services:
+
+  b4p:
+    container_name: api-dev
+    build: .
+    ports:
+      - 80:80
+      - 443:443
+
+    networks:
+      default:
+        ipv4_address: 10.5.0.7
+
+    volumes:
+      - .:/var/www/html
+    #   - ./config_apache/conf/apache2.conf:/etc/apache2/apache2.conf
+      # - ./config_apache/sites:/etc/apache2/sites-available
+
+    hostname: local.checkout.com.br
+networks:
+  default:
+    external:
+      name: rede-interna
+  #external: true

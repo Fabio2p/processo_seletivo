@@ -15,128 +15,37 @@ class Home extends Controller{
     public function index(){
     
       try{
-
-        $eventos  = $this->model('/index','Incidentes');
-
-        $evento = $eventos->mostra_incidentes_aberto();
-
-        $data['dados'] = $evento;
-
-        $this->view('/index','incidentes', $data);
-
+        $this->view('/index','datatables');
+        
       }catch(Exception $error){ }
 
     }
 
-    //@ATALIZAÇÃO PARA QUE SE COMUNICA COM O ZABBIX E OS DADOS SEJAM ARMAZENADOS NO BANCO
-    public function refresh(){
+    public function data(){
 
-        $ApiZabbix = $this->model('/index','ApiZabbix');
+      $users = $this->model('/index','Usuarios');
 
-        $urlApi = $ApiZabbix->requestApiZabbixUrl("http://172.17.0.2/zabbix/api_jsonrpc.php");
+      $page = !empty($_POST['draw']) ? $draw =$_REQUEST['draw'] : 1;
 
-        $login  = $ApiZabbix->responseApiZabbixAuth($urlApi, 'Admin', 'zabbix');
+      $start = !empty($_POST['start']) ? $_POST['start'] : 0;
 
-        $teste  = $this->model('/index','Incidentes');
-  
-        //@Monta a data para buscar os incidentes no zabbix
-        $monta_data = date("Y-m-d H:i:00", strtotime('-30 minutes'));
+      $length = !empty($_POST['length']) ? $_POST['length'] : 5;
+      
+      $lista_usuarios = $users->listUsuarios($length,$start);
 
-        //@COnverte para data UNIX
-        $converte_data = strtotime($monta_data);
+      $rows = [];
 
-        $add_data = new DateTime("@$converte_data");
-          
-        $add_data->format('U');
+      $data['draw'] = intval($page);
+      $data['recordsTotal']  = 50;
+      $data['recordsFiltered'] = 50;
+      
+      foreach($lista_usuarios as $user){
+        $rows[] = array($user['id'], $user['nome'],$user['sobrenome']);
+      }
 
-        $aberto = @$ApiZabbix->buscaEventoAbertoApiZabbix($urlApi, $login->result, $login->id, "event.get");
+      $data['data'] = $rows;
 
-        foreach($aberto->result as $i => $eventos){
-
-          $data_abertura = date('Y-m-d H:i:s', $eventos->clock);
-
-          $teste->insertIncidentesApi(@$eventos->hosts[0]->hostid, $eventos->eventid,$eventos->name,$data_abertura, @$eventos->relatedObject->templateid);
-            
-        } 
-
-        $this->encerraIncidentes($urlApi, $login->result, $login->id);
-
+      header("Content-type: application/json");
+      echo json_encode($data, true);
     }
-
-      /*
-  *DATA: 27-06-2020
-  *
-  *AS FUNCIONALIDADES ABAIXO TEM COMO OBJETIVO A CORRECAO E MELHORIAS NO MOMENTOS DA ATUALIZACAO E ADICAO DE HOSTS NOS APPLIANCES
- */
-  public function encerraIncidentes($urlApi, $user, $pass){
-
-        $ApiZabbix = $this->model('/index','ApiZabbix');
-
-         $teste  = $this->model('/index','Incidentes');
-
-        $exibe_incidentes = $teste->mostra_incidentes_aberto();
-        //@Aqui entra os eventod cadastrado no banco
-       
-       foreach($exibe_incidentes as $i => $detalha):
-
-           $incidente_aberto = array("output" => array('eventid','r_eventid'),
-            
-             "filter" => array('value' => 1, "eventid" =>  $detalha['ID_INCIDENTE']),
-
-             "selectRelatedObject" => "extend"
-
-          );
-         
-          
-           $aberto = @$ApiZabbix->responseApiZabbixExecute($urlApi, $user, $pass, "event.get",$incidente_aberto);
-
-
-          foreach($aberto->result as $e_a => $detalhamento):
-
-              if($detalhamento->eventid == $detalha['ID_INCIDENTE'] && @$detalhamento->relatedObject->triggerid):
-                  
-                echo  "Podem ser fechado: ". $detalhamento->eventid .'<br>';
-
-                $incidente_fechado = array(
-
-                  'output' => array('eventid', 'clock','value','name'),
-
-                  "filter" => array('value' => 0, "eventid" => $detalhamento->r_eventid)
-                );
-
-
-                $fechado = @$ApiZabbix->responseApiZabbixExecute($urlApi, $user, $pass, "event.get",$incidente_fechado);
-
-                  
-                for($e_f = 0; $e_f <= $e_a; $e_f++):
-
-                  if(@$fechado->result[$e_f]->eventid == $detalhamento->r_eventid):
-
-                    $status = "RESOLVIDO";
-
-                    $data_encerramento = date("Y-m-d H:i:s ", @$fechado->result[0]->clock);
-
-                    $teste->update_incidentes($detalhamento->eventid,$status, $data_encerramento);
-
-                  endif;
-
-                endfor;           
-
-               else:
-
-                $status = "CANCELADO";
-
-                $data = date("Y-m-d H:i:s");
-
-                $teste->update_incidentes($detalhamento->eventid,$status,$data);
-
-              endif;  
-
-          endforeach;  
-        
-      endforeach;   
-  
-       
-    }
-
 }

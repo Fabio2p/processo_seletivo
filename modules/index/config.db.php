@@ -4,9 +4,9 @@
 
     $DESENVOLVIMENTO = [
 
-       'HOST' => "192.168.0.111",
+       'HOST' => "10.5.0.2",
        'BASE' => 'projetos_dev',
-       'USER' => 'fabio',
+       'USER' => 'root',
        'PASS' => 'F@bio3306',
 
     ];
@@ -29,7 +29,7 @@
     ];
 
 
-    $AMBIENTE = TRUE;
+    $AMBIENTE = true;
 
     $seta = $AMBIENTE ? $DESENVOLVIMENTO : $PRODUCAO;
 

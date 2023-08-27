@@ -8,88 +8,95 @@
 <script>
      $('document').ready(function()
     {
-       
-        $('#example').DataTable({
 
-            processing: true,
-
-            "stateSave": true,
-
-            cache: false,
-
-            "info": true,
-
+        let dataTable = $('#example').DataTable({
+            processing:true,
+            destroy: true,
+            serverSide: true,
+            pageLength : 5,
             ajax: {
- 
-                url: "http://host.local.dev-sys/index/datatable/dataTableJson",
-                
-                dataSrc: "",
-
-                mDataProp: "",
-                
-                type: 'POST',
-                
-               
-               
+                url: "http://local.checkout.com.br/index/home/data",
+                "type": "post",
             },
-
-            "columns": [
-              
-                { "data": "status" },
-                { "data": "urgencia" }
+            "aoColumns": [
+                { "sClass": "my_class" },
+                { "sClass": "meu_nome" },
+                { "sClass": "meu_sobrenome" }
             ],
-            
-            "order": [[0, 'desc']]
-           
-        });
-        
+            columnDefs: [
+            {
+                targets: 1,
+                render: function(data, type, row) {
+                    if (data == 'Fabio') {
+                        return `<span style="color: green;">${data}</span>`
+                    }
+                    return data;
+                }
+            }
+        ],
+        })
        
-        
-
-        $("#selecione").change(function(){
-
-           var t = $(this).val();
-
-      
-            $('#example').DataTable({
-
-                processing: true,
-                
-                "stateSave": true,
-
-                destroy: true,
-
-                cache: false,
-
-                "info": true,
-
-                ajax: {
-    
-                    url: "http://host.local.dev-sys/index/datatable/dataTableJsons",
-                    
-                    dataSrc: "",
-
-                    mDataProp: "",
-                    
-                    type: 'POST',
-
-                    data:{t:t}
-                
-                },
-
-                "columns": [
-                
-                    { "data": "status" },
-                    { "data": "urgencia" }
-                ],
-                
-                "order": [[0, 'desc']]
+        // var dataTable = $('#example').DataTable({
             
-            });
+        //     destroy: true,
+        //     retrieve: true,
+        //     searching: false,
+        //     pageLength: 5,
+        //     processing: true,
+        //     serverSide: true,
+        //     deferLoading: 20,
+        //     columnDefs: [
+        //         {
+        //             render: (data, type, row) => data,
+        //             targets: 0
+        //         },
+        //     ],
+
+        //     lengthMenu: [
+        //         [5, 10, 20, -1],
+        //         [5, 10, 20, 'Todos']
+        //     ],
+
+        //     ajax: {
+        //         serverMethod: 'post',
+        //         dataSrc: "",
+        //         mDataProp: "",
+        //         url: "http://local.checkout.com.br",
+        //         type: "post",
+        //         data: function(d) {
+        //             d.page = dataTable.page.info().page + 1;
+        //         },
+                
+        //     },
+
+
+        //     // processing: true,
+
+        //     // "stateSave": true,
+
+        //     // cache: false,
+
+        //     // "info": true,
+
+        //     // ajax: {
+        //     //     'serverMethod': 'post',
+        //     //     url: "http://host.local.dev-sys/index/home/data",
+                
+        //     //     dataSrc: "",
+
+        //     //     mDataProp: "",
+                
+        //     //     type: 'POST',
+                
+               
+               
+        //     // },
+
+        //     // "order": [[0, 'desc']]
+           
+        // });
         
-
-        });
-
+    
     });
 
 </script>
@@ -97,35 +104,15 @@
 
     </head>
  <body>
-    <form>
-        <select name="" id="selecione">
-            <option value="1">Equipamento</option>
-             <option value="2">Equipamento</option>
-              <option value="3">Equipamento</option>
-               <option value="4">Equipamento</option>
-        </select>
-    </form>
-
+  
     <table id="example" class="display" style="width:100%">
         <thead>
             <tr>
-                
+                <th>Id</th>
                 <th>Nome</th>
-                <th>descricao</th>
-               
+                <th>Sobrenome</th>
             </tr>
         </thead>
-        <tbody>
-            
-        </tbody>
-        <tfoot>
-            <tr>
-             
-                <th>Nome</th>
-                 <th>descricao</th>
-              
-            </tr>
-        </tfoot>
     </table>
 
  

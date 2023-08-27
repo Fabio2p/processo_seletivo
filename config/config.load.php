@@ -13,7 +13,7 @@
 
 	//define('BASE_URL',"https://homologacaosuporte.sdredes.info");
 
-	define('BASE_URL',"http://host.local.dev-sys");
+	define('BASE_URL',"http://local.checkout.com.br");
 
 	date_default_timezone_set("America/Sao_Paulo");
 
