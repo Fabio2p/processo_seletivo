@@ -17,23 +17,24 @@
             ajax: {
                 url: "http://local.checkout.com.br/index/home/data",
                 "type": "post",
+                mDataProp: "",
+                mDataProp: "",
             },
             "aoColumns": [
                 { "sClass": "my_class" },
                 { "sClass": "meu_nome" },
                 { "sClass": "meu_sobrenome" }
             ],
-            columnDefs: [
-            {
-                targets: 1,
-                render: function(data, type, row) {
-                    if (data == 'Fabio') {
-                        return `<span style="color: green;">${data}</span>`
-                    }
-                    return data;
-                }
-            }
-        ],
+        //     columnDefs: [
+        //     {
+        //         targets: 0,
+        //         render: function(data, type, row) {
+        //             return data;
+        //         }
+        //     }
+        // ],
+
+        // order: [[0, "desc"]],
         })
        
         // var dataTable = $('#example').DataTable({
@@ -113,6 +114,13 @@
                 <th>Sobrenome</th>
             </tr>
         </thead>
+        <tbody>
+            <?php foreach($lista_usuarios as $lista): ?>
+                <tr><td><?= $lista['id'] ?> </td></tr>
+                <tr><td><?= $lista['nome'] ?></td></tr>
+                <tr><td><?= $lista['sobrenome'] ?></td></tr>
+            <?php endforeach; ?>
+        </tbody>
     </table>
 
  
